@@ -2,28 +2,22 @@
 
 import {
   DndContext,
+  type DragEndEvent,
   KeyboardSensor,
   PointerSensor,
-  type DragEndEvent,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
 import { useRouter } from "next/navigation";
-import {
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-  useOptimistic,
-} from "react";
+import { useEffect, useMemo, useOptimistic, useState, useTransition } from "react";
 import { updateJobApplicationStatus } from "@/app/actions";
 import { APPLICATION_STATUSES } from "@/lib/status";
+import { AccessCheckingOverlay, AccessModal } from "./access-modal";
 import { ACCESS_STORAGE_KEY } from "./constants";
-import { AccessModal, AccessCheckingOverlay } from "./access-modal";
-import { JobModal } from "./job-modal";
 import { JobDetailModal } from "./job-detail-modal";
+import { JobModal } from "./job-modal";
 import { KanbanColumn } from "./kanban-column";
-import { JobApplicationView, FormMode, TrackerProps } from "./types";
+import type { FormMode, JobApplicationView, TrackerProps } from "./types";
 
 export type { JobApplicationView };
 
@@ -39,10 +33,8 @@ export function JobTracker({ jobs }: TrackerProps) {
 
   const [optimisticJobs, setOptimisticJobs] = useOptimistic(
     jobs,
-    (state, update: { jobId: string; nextStatus: typeof APPLICATION_STATUSES[number] }) =>
-      state.map((job) =>
-        job.id === update.jobId ? { ...job, status: update.nextStatus } : job
-      )
+    (state, update: { jobId: string; nextStatus: (typeof APPLICATION_STATUSES)[number] }) =>
+      state.map((job) => (job.id === update.jobId ? { ...job, status: update.nextStatus } : job)),
   );
 
   const sensors = useSensors(
@@ -72,7 +64,7 @@ export function JobTracker({ jobs }: TrackerProps) {
 
   function handleDragEnd(event: DragEndEvent) {
     const jobId = String(event.active.id);
-    const nextStatus = event.over?.id as typeof APPLICATION_STATUSES[number] | undefined;
+    const nextStatus = event.over?.id as (typeof APPLICATION_STATUSES)[number] | undefined;
 
     if (!nextStatus || !APPLICATION_STATUSES.includes(nextStatus)) {
       return;
@@ -136,11 +128,7 @@ export function JobTracker({ jobs }: TrackerProps) {
         ) : null}
 
         <div className="-mx-4 overflow-x-auto px-4 pb-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-          <DndContext
-            id="job-tracker-kanban"
-            sensors={sensors}
-            onDragEnd={handleDragEnd}
-          >
+          <DndContext id="job-tracker-kanban" sensors={sensors} onDragEnd={handleDragEnd}>
             <section
               className={`grid gap-6 sm:grid-cols-2 lg:min-w-[1496px] lg:grid-cols-5 ${
                 isPending ? "opacity-80" : ""
@@ -151,12 +139,7 @@ export function JobTracker({ jobs }: TrackerProps) {
                   key={status}
                   status={status}
                   jobs={statusJobs}
-                  onEdit={(selectedJob) =>
-                    setModal({ type: "edit", job: selectedJob })
-                  }
-                  onViewDetails={(selectedJob) =>
-                    setDetailJob(selectedJob)
-                  }
+                  onViewDetails={(selectedJob) => setDetailJob(selectedJob)}
                   nowMs={nowMs}
                 />
               ))}

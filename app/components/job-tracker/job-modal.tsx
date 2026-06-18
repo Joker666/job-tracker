@@ -1,16 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import { FormMode } from "./types";
 import { JobForm } from "./job-form";
+import type { FormMode } from "./types";
 
-export function JobModal({
-  mode,
-  onClose,
-}: {
-  mode: FormMode;
-  onClose: () => void;
-}) {
+export function JobModal({ mode, onClose }: { mode: FormMode; onClose: () => void }) {
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";

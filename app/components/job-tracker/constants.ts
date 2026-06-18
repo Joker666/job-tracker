@@ -1,4 +1,4 @@
-import { type ApplicationStatus } from "@/lib/status";
+import type { ApplicationStatus } from "@/lib/status";
 
 export const ACCESS_STORAGE_KEY = "job-tracker-access-granted";
 
@@ -27,10 +27,7 @@ export const MONTH_LABELS = [
   "Dec",
 ];
 
-export const STATUS_COLORS: Record<
-  ApplicationStatus,
-  { bg: string; accentBg: string }
-> = {
+export const STATUS_COLORS: Record<ApplicationStatus, { bg: string; accentBg: string }> = {
   SAVED: { bg: "bg-[#FFDE4D]", accentBg: "bg-[#FFF9C4]" },
   APPLIED: { bg: "bg-[#38BDF8]", accentBg: "bg-[#E0F7FA]" },
   INTERVIEWING: { bg: "bg-[#C084FC]", accentBg: "bg-[#F3E5F5]" },

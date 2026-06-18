@@ -1,51 +1,40 @@
 "use client";
 
 import { useDraggable } from "@dnd-kit/core";
-import { JobApplicationView } from "./types";
 import { formatInterviewDate } from "./job-detail-modal";
+import type { JobApplicationView } from "./types";
 
 export function JobCard({
   job,
-  onEdit,
   onViewDetails,
   nowMs,
 }: {
   job: JobApplicationView;
-  onEdit: (job: JobApplicationView) => void;
   onViewDetails: (job: JobApplicationView) => void;
   nowMs: number | null;
 }) {
   const nextInterview =
     nowMs === null
       ? undefined
-      : job.interviews.find(
-          (interview) => new Date(interview.interviewDate).getTime() >= nowMs,
-        );
+      : job.interviews.find((interview) => new Date(interview.interviewDate).getTime() >= nowMs);
   const featuredInterview =
     nextInterview ??
     (nowMs === null ? job.interviews[0] : job.interviews[job.interviews.length - 1]);
-  const {
-    attributes,
-    listeners,
-    setActivatorNodeRef,
-    setNodeRef,
-    transform,
-    isDragging,
-  } = useDraggable({
-    id: job.id,
-    data: {
-      status: job.status,
-    },
-  });
+  const { attributes, listeners, setActivatorNodeRef, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: job.id,
+      data: {
+        status: job.status,
+      },
+    });
   const style = {
-    transform: transform
-      ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-      : undefined,
+    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
     opacity: isDragging ? 0.3 : 1,
     zIndex: isDragging ? 50 : undefined,
   };
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: JobCard uses dnd-kit pointer sensors for dragging rather than static keyboard click events
     <article
       ref={(node) => {
         setNodeRef(node);
@@ -62,22 +51,24 @@ export function JobCard({
           <h3 className="font-mono text-sm font-black uppercase tracking-tight text-black line-clamp-1">
             {job.title}
           </h3>
-          <p className="font-mono text-xs font-bold text-black/70 mt-0.5">
-            {job.companyName}
-          </p>
+          <p className="font-mono text-xs font-bold text-black/70 mt-0.5">{job.companyName}</p>
         </div>
       </div>
 
       <div className="mt-4 border-t-2 border-dashed border-black/25 pt-3 space-y-1.5">
         {job.location ? (
           <div className="flex items-center gap-1.5 font-mono text-[11px] font-semibold text-black/75">
-            <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 border border-black bg-white shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">Loc</span>
+            <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 border border-black bg-white shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+              Loc
+            </span>
             <span className="truncate">{job.location}</span>
           </div>
         ) : null}
         {job.salaryRange ? (
           <div className="flex items-center gap-1.5 font-mono text-[11px] font-semibold text-black/75">
-            <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 border border-black bg-[#4ADE80] shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">Sal</span>
+            <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 border border-black bg-[#4ADE80] shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+              Sal
+            </span>
             <span className="truncate">{job.salaryRange}</span>
           </div>
         ) : null}

@@ -1,17 +1,7 @@
-import {
-  index,
-  pgEnum,
-  pgTable,
-  text,
-  timestamp,
-  uuid,
-} from "drizzle-orm/pg-core";
+import { index, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { APPLICATION_STATUSES, type ApplicationStatus } from "@/lib/status";
 
-export const applicationStatusEnum = pgEnum(
-  "application_status",
-  APPLICATION_STATUSES,
-);
+export const applicationStatusEnum = pgEnum("application_status", APPLICATION_STATUSES);
 
 export const jobApplications = pgTable("job_applications", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -26,12 +16,8 @@ export const jobApplications = pgTable("job_applications", {
   resumeUrl: text("resume_url"),
   resumeName: text("resume_name"),
   resumeUploadedAt: timestamp("resume_uploaded_at", { withTimezone: true }),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const jobInterviews = pgTable(
@@ -43,16 +29,10 @@ export const jobInterviews = pgTable(
       .references(() => jobApplications.id, { onDelete: "cascade" }),
     interviewDate: timestamp("interview_date", { withTimezone: true }).notNull(),
     interviewType: text("interview_type").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (table) => [
-    index("job_interviews_job_application_id_idx").on(table.jobApplicationId),
-  ],
+  (table) => [index("job_interviews_job_application_id_idx").on(table.jobApplicationId)],
 );
 
 export type JobApplication = typeof jobApplications.$inferSelect;

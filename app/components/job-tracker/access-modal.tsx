@@ -12,10 +12,7 @@ type ActionState = {
 const initialActionState: ActionState = { ok: false };
 
 export function AccessModal({ onGranted }: { onGranted: () => void }) {
-  const [state, formAction, pending] = useActionState(
-    verifyAppAccess,
-    initialActionState,
-  );
+  const [state, formAction, pending] = useActionState(verifyAppAccess, initialActionState);
 
   useEffect(() => {
     if (state.ok) {

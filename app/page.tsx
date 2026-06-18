@@ -1,8 +1,5 @@
+import { type JobApplicationView, JobTracker } from "@/app/components/job-tracker";
 import { getJobApplications } from "@/app/data";
-import {
-  JobTracker,
-  type JobApplicationView,
-} from "@/app/components/job-tracker";
 
 export const dynamic = "force-dynamic";
 

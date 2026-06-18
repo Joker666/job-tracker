@@ -109,13 +109,7 @@
     "public.application_status": {
       "name": "application_status",
       "schema": "public",
-      "values": [
-        "SAVED",
-        "APPLIED",
-        "INTERVIEWING",
-        "OFFER",
-        "REJECTED"
-      ]
+      "values": ["SAVED", "APPLIED", "INTERVIEWING", "OFFER", "REJECTED"]
     }
   },
   "schemas": {},

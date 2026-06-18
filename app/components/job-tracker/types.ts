@@ -1,4 +1,4 @@
-import { type ApplicationStatus } from "@/lib/status";
+import type { ApplicationStatus } from "@/lib/status";
 
 export type ActionState = {
   ok: boolean;
@@ -33,6 +33,4 @@ export type TrackerProps = {
   jobs: JobApplicationView[];
 };
 
-export type FormMode =
-  | { type: "create"; job?: never }
-  | { type: "edit"; job: JobApplicationView };
+export type FormMode = { type: "create"; job?: never } | { type: "edit"; job: JobApplicationView };

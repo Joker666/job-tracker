@@ -4,7 +4,7 @@ import { useActionState, useEffect, useId, useState } from "react";
 import { createJobApplication, updateJobApplication } from "@/app/actions";
 import { APPLICATION_STATUSES, STATUS_LABELS } from "@/lib/status";
 import { INTERVIEW_TYPE_OPTIONS } from "./constants";
-import { ActionState, FormMode, JobInterviewView } from "./types";
+import type { ActionState, FormMode, JobInterviewView } from "./types";
 
 export function createInterviewRow(interview: JobInterviewView | undefined, index: number) {
   return {
@@ -36,35 +36,20 @@ export function toDateTimeLocal(value: string) {
   return date.toISOString().slice(0, 16);
 }
 
-export function JobForm({
-  mode,
-  onDone,
-}: {
-  mode: FormMode;
-  onDone: () => void;
-}) {
+export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }) {
   const isEdit = mode.type === "edit";
   const job = mode.type === "edit" ? mode.job : null;
   const action =
-    mode.type === "edit"
-      ? updateJobApplication.bind(null, mode.job.id)
-      : createJobApplication;
+    mode.type === "edit" ? updateJobApplication.bind(null, mode.job.id) : createJobApplication;
   const rowIdPrefix = useId();
   const [interviewRows, setInterviewRows] = useState(() =>
     job?.interviews.length
-      ? job.interviews.map((interview, index) =>
-          createInterviewRow(interview, index),
-        )
+      ? job.interviews.map((interview, index) => createInterviewRow(interview, index))
       : [createInterviewRow(undefined, 0)],
   );
-  const [nextInterviewRowIndex, setNextInterviewRowIndex] = useState(
-    () => interviewRows.length,
-  );
+  const [nextInterviewRowIndex, setNextInterviewRowIndex] = useState(() => interviewRows.length);
   const initialActionState: ActionState = { ok: false };
-  const [state, formAction, pending] = useActionState(
-    action,
-    initialActionState,
-  );
+  const [state, formAction, pending] = useActionState(action, initialActionState);
 
   useEffect(() => {
     if (state.ok) {
@@ -82,7 +67,9 @@ export function JobForm({
 
       <div className="grid gap-6 sm:grid-cols-2">
         <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
-          <span>Title <span className="text-red-500">*</span></span>
+          <span>
+            Title <span className="text-red-500">*</span>
+          </span>
           <input
             className="h-11 w-full border-2 border-black bg-white px-3 font-sans text-sm font-semibold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
             name="title"
@@ -93,7 +80,9 @@ export function JobForm({
         </label>
 
         <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
-          <span>Company name <span className="text-red-500">*</span></span>
+          <span>
+            Company name <span className="text-red-500">*</span>
+          </span>
           <input
             className="h-11 w-full border-2 border-black bg-white px-3 font-sans text-sm font-semibold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
             name="companyName"
@@ -135,7 +124,9 @@ export function JobForm({
         </label>
 
         <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
-          <span>Status <span className="text-red-500">*</span></span>
+          <span>
+            Status <span className="text-red-500">*</span>
+          </span>
           <div className="relative h-11 border-2 border-black bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all focus-within:bg-yellow-50 focus-within:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <select
               className="h-full w-full appearance-none bg-transparent px-3 pr-12 font-mono text-xs font-bold text-black outline-none"
@@ -201,9 +192,7 @@ export function JobForm({
             onClick={() => {
               setInterviewRows((currentRows) => [
                 ...currentRows,
-                createEmptyInterviewRow(
-                  `${rowIdPrefix}-new-${nextInterviewRowIndex}`,
-                ),
+                createEmptyInterviewRow(`${rowIdPrefix}-new-${nextInterviewRowIndex}`),
               ]);
               setNextInterviewRowIndex((currentIndex) => currentIndex + 1);
             }}
@@ -241,8 +230,7 @@ export function JobForm({
                       {option}
                     </option>
                   ))}
-                  {row.interviewType &&
-                  !INTERVIEW_TYPE_OPTIONS.includes(row.interviewType) ? (
+                  {row.interviewType && !INTERVIEW_TYPE_OPTIONS.includes(row.interviewType) ? (
                     <option value={row.interviewType}>{row.interviewType}</option>
                   ) : null}
                 </select>

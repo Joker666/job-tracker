@@ -1,21 +1,19 @@
 "use client";
 
 import { useDroppable } from "@dnd-kit/core";
-import { STATUS_LABELS, type ApplicationStatus } from "@/lib/status";
+import { type ApplicationStatus, STATUS_LABELS } from "@/lib/status";
 import { STATUS_COLORS } from "./constants";
-import { JobApplicationView } from "./types";
 import { JobCard } from "./job-card";
+import type { JobApplicationView } from "./types";
 
 export function KanbanColumn({
   status,
   jobs,
-  onEdit,
   onViewDetails,
   nowMs,
 }: {
   status: ApplicationStatus;
   jobs: JobApplicationView[];
-  onEdit: (job: JobApplicationView) => void;
   onViewDetails: (job: JobApplicationView) => void;
   nowMs: number | null;
 }) {
@@ -33,7 +31,9 @@ export function KanbanColumn({
       }`}
     >
       {/* Column Title Sticker */}
-      <div className={`mb-6 flex items-center justify-between border-2 border-black p-2.5 ${colorConfig.bg} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`}>
+      <div
+        className={`mb-6 flex items-center justify-between border-2 border-black p-2.5 ${colorConfig.bg} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`}
+      >
         <h2 className="font-mono text-xs font-black uppercase tracking-wider text-black">
           {STATUS_LABELS[status]}
         </h2>
@@ -45,13 +45,7 @@ export function KanbanColumn({
       <div className="space-y-4">
         {jobs.length > 0 ? (
           jobs.map((job) => (
-            <JobCard
-              key={job.id}
-              job={job}
-              onEdit={onEdit}
-              onViewDetails={onViewDetails}
-              nowMs={nowMs}
-            />
+            <JobCard key={job.id} job={job} onViewDetails={onViewDetails} nowMs={nowMs} />
           ))
         ) : (
           <div className="border-2 border-dashed border-black/35 bg-[#FAF8F5] px-4 py-8 text-center font-mono text-xs font-bold uppercase tracking-wider text-black/40">
