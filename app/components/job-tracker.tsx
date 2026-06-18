@@ -211,9 +211,9 @@ function JobForm({
 
         <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
           <span>Status <span className="text-red-500">*</span></span>
-          <div className="relative">
+          <div className="relative h-11 border-2 border-black bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all focus-within:bg-yellow-50 focus-within:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <select
-              className="h-11 w-full border-2 border-black bg-white px-3 font-mono text-xs font-bold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all appearance-none"
+              className="h-full w-full appearance-none bg-transparent px-3 pr-12 font-mono text-xs font-bold text-black outline-none"
               name="status"
               required
               defaultValue={job?.status ?? "SAVED"}
@@ -224,7 +224,7 @@ function JobForm({
                 </option>
               ))}
             </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-black font-black border-l-2 border-black bg-[#FFDE4D]">
+            <div className="pointer-events-none absolute right-0 top-0 flex h-full w-11 items-center justify-center border-l-2 border-black bg-[#FFDE4D] text-black font-black">
               ▼
             </div>
           </div>
