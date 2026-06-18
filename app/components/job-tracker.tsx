@@ -742,7 +742,6 @@ function JobCard({
   onViewDetails: (job: JobApplicationView) => void;
   nowMs: number | null;
 }) {
-  const notePreview = job.note || job.description;
   const nextInterview =
     nowMs === null
       ? undefined
@@ -810,14 +809,6 @@ function JobCard({
           </div>
         ) : null}
       </div>
-
-      {notePreview ? (
-        <div className="mt-3 border border-black bg-white p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-          <p className="line-clamp-2 text-xs leading-normal font-sans font-medium text-black/80">
-            {notePreview}
-          </p>
-        </div>
-      ) : null}
 
       {job.interviews.length > 0 ? (
         <div className="mt-3 border border-black bg-[#FFFDEB] p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
@@ -1040,32 +1031,34 @@ export function JobTracker({ jobs }: TrackerProps) {
           </div>
         ) : null}
 
-        <DndContext
-          id="job-tracker-kanban"
-          sensors={sensors}
-          onDragEnd={handleDragEnd}
-        >
-          <section
-            className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-5 ${
-              isPending ? "opacity-80" : ""
-            }`}
+        <div className="-mx-4 overflow-x-auto px-4 pb-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+          <DndContext
+            id="job-tracker-kanban"
+            sensors={sensors}
+            onDragEnd={handleDragEnd}
           >
-            {jobsByStatus.map(({ status, jobs: statusJobs }) => (
-              <KanbanColumn
-                key={status}
-                status={status}
-                jobs={statusJobs}
-                onEdit={(selectedJob) =>
-                  setModal({ type: "edit", job: selectedJob })
-                }
-                onViewDetails={(selectedJob) =>
-                  setDetailJob(selectedJob)
-                }
-                nowMs={nowMs}
-              />
-            ))}
-          </section>
-        </DndContext>
+            <section
+              className={`grid gap-6 sm:grid-cols-2 lg:min-w-[1496px] lg:grid-cols-5 ${
+                isPending ? "opacity-80" : ""
+              }`}
+            >
+              {jobsByStatus.map(({ status, jobs: statusJobs }) => (
+                <KanbanColumn
+                  key={status}
+                  status={status}
+                  jobs={statusJobs}
+                  onEdit={(selectedJob) =>
+                    setModal({ type: "edit", job: selectedJob })
+                  }
+                  onViewDetails={(selectedJob) =>
+                    setDetailJob(selectedJob)
+                  }
+                  nowMs={nowMs}
+                />
+              ))}
+            </section>
+          </DndContext>
+        </div>
       </div>
 
       {modal ? <JobModal mode={modal} onClose={() => setModal(null)} /> : null}
