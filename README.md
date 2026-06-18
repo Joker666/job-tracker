@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Job Tracker
 
-## Getting Started
+A minimal Next.js App Router job tracker with Drizzle ORM, Neon Postgres, Cloudflare R2 resume uploads, and a draggable kanban board.
 
-First, run the development server:
+## Features
+
+- Job application CRUD for title, company, description, location, salary range, note, and status.
+- Kanban columns for Saved, Applied, Interviewing, Offer, and Rejected.
+- Drag-and-drop status updates persisted to Postgres.
+- One submitted resume PDF per job, stored in Cloudflare R2.
+- Resume metadata stored directly on `job_applications`: `resume_url`, `resume_name`, and `resume_uploaded_at`.
+
+## Environment
+
+Copy `.env.example` to `.env` and fill in the values:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```env
+DATABASE_URL="postgresql://user:password@host.neon.tech/job-tracker?sslmode=require"
+R2_ACCOUNT_ID=""
+R2_ACCESS_KEY_ID=""
+R2_SECRET_ACCESS_KEY=""
+R2_BUCKET_NAME=""
+R2_PUBLIC_URL=""
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Neon setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Create a Neon project and database.
+2. Copy the pooled or direct connection string.
+3. Set `DATABASE_URL` in `.env`.
+4. Keep `sslmode=require` in the connection string.
 
-## Learn More
+## Drizzle migrations
 
-To learn more about Next.js, take a look at the following resources:
+Generate migrations after schema changes:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm db:generate
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Apply migrations to Neon:
 
-## Deploy on Vercel
+```bash
+pnpm db:migrate
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The initial migration creates:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `application_status` enum with `SAVED`, `APPLIED`, `INTERVIEWING`, `OFFER`, `REJECTED`
+- `job_applications` table
+
+## Cloudflare R2 setup
+
+1. Create an R2 bucket.
+2. Create an R2 API token with object read/write access for the bucket.
+3. Set `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, and `R2_BUCKET_NAME`.
+4. Configure public access for downloads through a custom domain or public bucket URL.
+5. Set `R2_PUBLIC_URL` to that public base URL, without a trailing slash.
+
+Only PDF files are accepted. Uploaded files are stored under `resumes/` and linked from the job card.
+
+## Local development
+
+Install dependencies:
+
+```bash
+pnpm install
+```
+
+Run migrations:
+
+```bash
+pnpm db:migrate
+```
+
+Start the app:
+
+```bash
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+## Production notes
+
+- There is intentionally no authentication in this version.
+- Server Actions validate required fields before writes.
+- R2 credentials are only required when a resume is uploaded.
+- Dragging a card between kanban columns updates `job_applications.status`.
