@@ -58,7 +58,7 @@ export function JobCard({
       <div className="mt-4 border-t-2 border-dashed border-black/25 pt-3 space-y-1.5">
         {job.location ? (
           <div className="flex items-center gap-1.5 font-mono text-[11px] font-semibold text-black/75">
-            <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 border border-black bg-white shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+            <span className="w-[30px] inline-flex items-center justify-center uppercase text-[9px] font-bold py-0.5 border border-black bg-white shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
               Loc
             </span>
             <span className="truncate">{job.location}</span>
@@ -66,7 +66,7 @@ export function JobCard({
         ) : null}
         {job.salaryRange ? (
           <div className="flex items-center gap-1.5 font-mono text-[11px] font-semibold text-black/75">
-            <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 border border-black bg-[#4ADE80] shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+            <span className="w-[30px] inline-flex items-center justify-center uppercase text-[9px] font-bold py-0.5 border border-black bg-[#4ADE80] shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
               Sal
             </span>
             <span className="truncate">{job.salaryRange}</span>

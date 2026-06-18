@@ -81,7 +81,7 @@ export function JobListView({
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6 shrink-0">
                         {/* Interview info */}
                         {featuredInterview ? (
-                          <div className="min-w-[150px]">
+                          <div className="sm:w-[150px] shrink-0">
                             <span className="inline-block border border-black bg-[#FFFDEB] px-1 py-0.5 font-mono text-[8px] font-black uppercase tracking-wider text-black mb-1">
                               {featuredInterview.interviewType}
                             </span>
@@ -93,10 +93,10 @@ export function JobListView({
 
                         {/* Location & Salary */}
                         {job.location || job.salaryRange ? (
-                          <div className="flex flex-col gap-1.5 min-w-[120px]">
+                          <div className="flex flex-col gap-1.5 sm:w-[160px] shrink-0">
                             {job.location ? (
                               <div className="flex items-center gap-1.5 font-mono text-[10px] font-semibold text-black/75">
-                                <span className="uppercase text-[8px] font-bold px-1 py-0.5 border border-black bg-white shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+                                <span className="w-[28px] inline-flex items-center justify-center uppercase text-[8px] font-bold py-0.5 border border-black bg-white shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
                                   Loc
                                 </span>
                                 <span className="truncate max-w-[120px]">{job.location}</span>
@@ -104,7 +104,7 @@ export function JobListView({
                             ) : null}
                             {job.salaryRange ? (
                               <div className="flex items-center gap-1.5 font-mono text-[10px] font-semibold text-black/75">
-                                <span className="uppercase text-[8px] font-bold px-1 py-0.5 border border-black bg-[#4ADE80] shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+                                <span className="w-[28px] inline-flex items-center justify-center uppercase text-[8px] font-bold py-0.5 border border-black bg-[#4ADE80] shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
                                   Sal
                                 </span>
                                 <span className="truncate max-w-[120px]">{job.salaryRange}</span>
