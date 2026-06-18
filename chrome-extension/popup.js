@@ -28,6 +28,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Failed to load settings:", err);
   }
 
+  const persistSettings = async () => {
+    try {
+      await chrome.storage.sync.set({
+        hostUrl: hostInput.value.trim().replace(/\/$/, ""),
+        apiToken: apiTokenInput.value.trim(),
+      });
+    } catch (err) {
+      console.error("Failed to save settings:", err);
+    }
+  };
+
+  hostInput.addEventListener("input", persistSettings);
+  apiTokenInput.addEventListener("input", persistSettings);
+
   // Query Current Tab info
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -92,12 +106,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    // Save Settings
-    try {
-      await chrome.storage.sync.set({ hostUrl, apiToken });
-    } catch (err) {
-      console.error("Failed to save settings:", err);
-    }
+    await persistSettings();
 
     // Build payload
     const payload = {
