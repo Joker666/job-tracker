@@ -57,7 +57,7 @@ export function JobDetailPageContent({ job }: { job: JobApplicationView }) {
       ) : null}
 
       <div
-        className={`mx-auto max-w-4xl ${
+        className={`mx-auto max-w-6xl ${
           accessGranted ? "" : "pointer-events-none select-none blur-sm"
         }`}
         aria-hidden={!accessGranted}
@@ -145,28 +145,13 @@ export function JobDetailPageContent({ job }: { job: JobApplicationView }) {
 
           {/* Details Content Grid */}
           <div className="grid gap-8 md:grid-cols-3">
-            {/* Left Columns - Details (Description + Notes) */}
-            <div className="md:col-span-2 space-y-6">
-              {/* Job Description */}
-              <div className="border-2 border-black bg-white p-5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-                <h3 className="font-mono text-xs font-black uppercase tracking-wider text-black mb-3 pb-2 border-b border-black/10">
-                  // Job Description
-                </h3>
-                <div className="text-sm font-medium leading-relaxed whitespace-pre-wrap text-black/90 min-h-[120px]">
-                  {job.description || (
-                    <span className="font-mono text-xs font-bold text-black/40 uppercase">
-                      No description provided.
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Personal Notes */}
-              <div className="border-2 border-black bg-white p-5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+            {/* Left Columns - Personal Notes */}
+            <div className="md:col-span-2">
+              <div className="border-2 border-black bg-white p-5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] h-full">
                 <h3 className="font-mono text-xs font-black uppercase tracking-wider text-black mb-3 pb-2 border-b border-black/10">
                   // Personal Notes & Log
                 </h3>
-                <div className="text-sm font-medium leading-relaxed whitespace-pre-wrap text-black/90 min-h-[80px]">
+                <div className="text-sm font-medium leading-relaxed whitespace-pre-wrap text-black/90 min-h-[160px]">
                   {job.note || (
                     <span className="font-mono text-xs font-bold text-black/40 uppercase">
                       No notes added yet.
@@ -252,6 +237,20 @@ export function JobDetailPageContent({ job }: { job: JobApplicationView }) {
                   </a>
                 ) : null}
               </div>
+            </div>
+          </div>
+
+          {/* Job Description (Full width at bottom) */}
+          <div className="mt-8 border-2 border-black bg-white p-5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+            <h3 className="font-mono text-xs font-black uppercase tracking-wider text-black mb-3 pb-2 border-b border-black/10">
+              // Job Description
+            </h3>
+            <div className="text-sm font-medium leading-relaxed whitespace-pre-wrap text-black/90 min-h-[120px]">
+              {job.description || (
+                <span className="font-mono text-xs font-bold text-black/40 uppercase">
+                  No description provided.
+                </span>
+              )}
             </div>
           </div>
         </div>
