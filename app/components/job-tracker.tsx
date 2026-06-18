@@ -2,14 +2,19 @@
 
 import {
   DndContext,
+  KeyboardSensor,
+  PointerSensor,
   type DragEndEvent,
   useDraggable,
   useDroppable,
+  useSensor,
+  useSensors,
 } from "@dnd-kit/core";
 import { useRouter } from "next/navigation";
 import {
   useActionState,
   useEffect,
+  useId,
   useMemo,
   useState,
   useTransition,
@@ -73,12 +78,34 @@ const INTERVIEW_TYPE_OPTIONS = [
   "Hiring manager",
   "Final",
 ];
+const MONTH_LABELS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 
-function createInterviewRow(interview?: JobInterviewView) {
+function createInterviewRow(interview: JobInterviewView | undefined, index: number) {
   return {
-    key: interview?.id ?? `new-${Date.now()}-${Math.random()}`,
+    key: interview?.id ?? `new-${index}`,
     interviewDate: interview?.interviewDate ?? "",
     interviewType: interview?.interviewType ?? "",
+  };
+}
+
+function createEmptyInterviewRow(key: string) {
+  return {
+    key,
+    interviewDate: "",
+    interviewType: "",
   };
 }
 
@@ -93,18 +120,27 @@ function toDateTimeLocal(value: string) {
     return "";
   }
 
-  const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-
-  return offsetDate.toISOString().slice(0, 16);
+  return date.toISOString().slice(0, 16);
 }
 
 function formatInterviewDate(value: string) {
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(new Date(value));
+  const date = new Date(value);
+  const hours = date.getUTCHours();
+  const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+  const period = hours >= 12 ? "PM" : "AM";
+  const hour = hours % 12 || 12;
+
+  return `${MONTH_LABELS[date.getUTCMonth()]} ${date.getUTCDate()}, ${hour}:${minutes} ${period}`;
+}
+
+function formatResumeUploadedAt(value: string) {
+  const date = new Date(value);
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  const hours = String(date.getUTCHours()).padStart(2, "0");
+  const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+
+  return `${date.getUTCFullYear()}-${month}-${day} ${hours}:${minutes} UTC`;
 }
 
 const STATUS_COLORS: Record<
@@ -131,10 +167,16 @@ function JobForm({
     mode.type === "edit"
       ? updateJobApplication.bind(null, mode.job.id)
       : createJobApplication;
+  const rowIdPrefix = useId();
   const [interviewRows, setInterviewRows] = useState(() =>
     job?.interviews.length
-      ? job.interviews.map(createInterviewRow)
-      : [createInterviewRow()],
+      ? job.interviews.map((interview, index) =>
+          createInterviewRow(interview, index),
+        )
+      : [createInterviewRow(undefined, 0)],
+  );
+  const [nextInterviewRowIndex, setNextInterviewRowIndex] = useState(
+    () => interviewRows.length,
   );
   const [state, formAction, pending] = useActionState(
     action,
@@ -273,12 +315,15 @@ function JobForm({
           </div>
           <button
             type="button"
-            onClick={() =>
+            onClick={() => {
               setInterviewRows((currentRows) => [
                 ...currentRows,
-                createInterviewRow(),
-              ])
-            }
+                createEmptyInterviewRow(
+                  `${rowIdPrefix}-new-${nextInterviewRowIndex}`,
+                ),
+              ]);
+              setNextInterviewRowIndex((currentIndex) => currentIndex + 1);
+            }}
             className="inline-flex h-9 items-center justify-center border-2 border-black bg-[#38BDF8] px-3 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
           >
             + Add Round
@@ -325,7 +370,7 @@ function JobForm({
                   onClick={() =>
                     setInterviewRows((currentRows) =>
                       currentRows.length === 1
-                        ? [createInterviewRow()]
+                        ? [createInterviewRow(undefined, 0)]
                         : currentRows.filter((candidate) => candidate.key !== row.key),
                     )
                   }
@@ -414,10 +459,12 @@ function JobDetailModal({
   job,
   onClose,
   onEdit,
+  nowMs,
 }: {
   job: JobApplicationView;
   onClose: () => void;
   onEdit: () => void;
+  nowMs: number | null;
 }) {
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -517,7 +564,9 @@ function JobDetailModal({
                 {sortedInterviews.length > 0 ? (
                   <div className="space-y-2 max-h-48 overflow-y-auto pr-2">
                     {sortedInterviews.map((interview, index) => {
-                      const isUpcoming = new Date(interview.interviewDate).getTime() >= Date.now();
+                      const isUpcoming =
+                        nowMs !== null &&
+                        new Date(interview.interviewDate).getTime() >= nowMs;
                       return (
                         <div key={interview.id} className={`flex items-start gap-3 border border-black bg-white p-2.5 shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] ${isUpcoming ? "border-l-4 border-l-[#C084FC]" : ""}`}>
                           <span className="border border-black bg-zinc-100 px-1.5 py-0.5 font-mono text-[8px] font-black text-black">
@@ -546,7 +595,7 @@ function JobDetailModal({
                     <p className="font-mono text-xs font-bold truncate text-black/80">{job.resumeName}</p>
                     {job.resumeUploadedAt ? (
                       <p className="font-mono text-[9px] text-black/55 uppercase font-bold">
-                        Uploaded: {new Intl.DateTimeFormat("en", { dateStyle: "short", timeStyle: "short" }).format(new Date(job.resumeUploadedAt))}
+                        Uploaded: {formatResumeUploadedAt(job.resumeUploadedAt)}
                       </p>
                     ) : null}
                   </div>
@@ -608,17 +657,23 @@ function JobCard({
   job,
   onEdit,
   onViewDetails,
+  nowMs,
 }: {
   job: JobApplicationView;
   onEdit: (job: JobApplicationView) => void;
   onViewDetails: (job: JobApplicationView) => void;
+  nowMs: number | null;
 }) {
   const notePreview = job.note || job.description;
-  const nextInterview = job.interviews.find(
-    (interview) => new Date(interview.interviewDate).getTime() >= Date.now(),
-  );
+  const nextInterview =
+    nowMs === null
+      ? undefined
+      : job.interviews.find(
+          (interview) => new Date(interview.interviewDate).getTime() >= nowMs,
+        );
   const featuredInterview =
-    nextInterview ?? job.interviews[job.interviews.length - 1];
+    nextInterview ??
+    (nowMs === null ? job.interviews[0] : job.interviews[job.interviews.length - 1]);
   const {
     attributes,
     listeners,
@@ -642,10 +697,15 @@ function JobCard({
 
   return (
     <article
-      ref={setNodeRef}
+      ref={(node) => {
+        setNodeRef(node);
+        setActivatorNodeRef(node);
+      }}
       style={style}
       onClick={() => onViewDetails(job)}
       className="border-3 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all bg-[#FAF8F5] relative group cursor-pointer hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+      {...listeners}
+      {...attributes}
     >
       <div className="flex items-start justify-between gap-3">
         <div>
@@ -656,18 +716,6 @@ function JobCard({
             {job.companyName}
           </p>
         </div>
-        <button
-          ref={setActivatorNodeRef}
-          type="button"
-          onClick={(e) => e.stopPropagation()}
-          onPointerDown={(e) => e.stopPropagation()}
-          className="cursor-grab border border-black bg-white px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] active:cursor-grabbing hover:bg-yellow-50 shrink-0 select-none"
-          aria-label={`Drag ${job.title}`}
-          {...listeners}
-          {...attributes}
-        >
-          DRAG
-        </button>
       </div>
 
       <div className="mt-4 border-t-2 border-dashed border-black/25 pt-3 space-y-1.5">
@@ -748,11 +796,13 @@ function KanbanColumn({
   jobs,
   onEdit,
   onViewDetails,
+  nowMs,
 }: {
   status: ApplicationStatus;
   jobs: JobApplicationView[];
   onEdit: (job: JobApplicationView) => void;
   onViewDetails: (job: JobApplicationView) => void;
+  nowMs: number | null;
 }) {
   const { isOver, setNodeRef } = useDroppable({
     id: status,
@@ -780,7 +830,13 @@ function KanbanColumn({
       <div className="space-y-4">
         {jobs.length > 0 ? (
           jobs.map((job) => (
-            <JobCard key={job.id} job={job} onEdit={onEdit} onViewDetails={onViewDetails} />
+            <JobCard
+              key={job.id}
+              job={job}
+              onEdit={onEdit}
+              onViewDetails={onViewDetails}
+              nowMs={nowMs}
+            />
           ))
         ) : (
           <div className="border-2 border-dashed border-black/35 bg-[#FAF8F5] px-4 py-8 text-center font-mono text-xs font-bold uppercase tracking-wider text-black/40">
@@ -797,12 +853,25 @@ export function JobTracker({ jobs }: TrackerProps) {
   const [modal, setModal] = useState<FormMode | null>(null);
   const [detailJob, setDetailJob] = useState<JobApplicationView | null>(null);
   const [localJobs, setLocalJobs] = useState(jobs);
+  const [nowMs, setNowMs] = useState<number | null>(null);
   const [statusError, setStatusError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor),
+  );
 
   useEffect(() => {
     setLocalJobs(jobs);
   }, [jobs]);
+
+  useEffect(() => {
+    setNowMs(Date.now());
+  }, []);
 
   const jobsByStatus = useMemo(() => {
     return APPLICATION_STATUSES.map((status) => ({
@@ -877,7 +946,11 @@ export function JobTracker({ jobs }: TrackerProps) {
           </div>
         ) : null}
 
-        <DndContext onDragEnd={handleDragEnd}>
+        <DndContext
+          id="job-tracker-kanban"
+          sensors={sensors}
+          onDragEnd={handleDragEnd}
+        >
           <section
             className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-5 ${
               isPending ? "opacity-80" : ""
@@ -894,6 +967,7 @@ export function JobTracker({ jobs }: TrackerProps) {
                 onViewDetails={(selectedJob) =>
                   setDetailJob(selectedJob)
                 }
+                nowMs={nowMs}
               />
             ))}
           </section>
@@ -910,6 +984,7 @@ export function JobTracker({ jobs }: TrackerProps) {
             setModal({ type: "edit", job: detailJob });
             setDetailJob(null);
           }}
+          nowMs={nowMs}
         />
       ) : null}
     </main>
