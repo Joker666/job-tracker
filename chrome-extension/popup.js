@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Query Current Tab info
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (tab && tab.url) {
+    if (tab?.url) {
       urlInput.value = tab.url;
 
       // Extract basic title heuristics from Tab title
@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
           }
 
-          if (response && response.ok) {
+          if (response?.ok) {
             const data = response.data;
             if (data.title) titleInput.value = data.title;
             if (data.company) companyInput.value = data.company;
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       salaryRange: salaryInput.value.trim(),
       status: statusInput.value,
       jobUrl: urlInput.value.trim() || null,
-      description: descInput.value.trim()
+      description: descInput.value.trim(),
     };
 
     showFeedback("Saving to Tracker...", "success");
@@ -117,9 +117,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-api-key": apiToken
+          "x-api-key": apiToken,
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
       const result = await response.json();
@@ -135,6 +135,48 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (err) {
       console.error(err);
       showFeedback(err instanceof Error ? err.message : "Failed to clip job posting.", "error");
+    }
+  });
+
+  // Copy AI Prompt click handler
+  const copyPromptBtn = document.getElementById("btnCopyPrompt");
+  copyPromptBtn.addEventListener("click", async () => {
+    const hostUrl = hostInput.value.trim().replace(/\/$/, "");
+    const apiToken = apiTokenInput.value.trim();
+
+    if (!hostUrl || !apiToken) {
+      settingsDetails.open = true;
+      showFeedback("Please configure Host URL and API Token in settings.", "error");
+      return;
+    }
+
+    const jobUrl = urlInput.value.trim() || "";
+
+    const promptText = `Analyze the job description on this page. Generate a ready-to-run curl command to POST this job application to my Job Tracker backend.
+
+Use this exact endpoint, headers, and JSON structure, filling in all the placeholder values (except the jobUrl, which is already filled) with details you extract from this page:
+
+curl -X POST "${hostUrl}/api/jobs" \\
+  -H "Content-Type: application/json" \\
+  -H "x-api-key: ${apiToken}" \\
+  -d '{
+    "title": "[Extracted Job Title]",
+    "companyName": "[Extracted Company Name]",
+    "location": "[Extracted Location or empty string]",
+    "salaryRange": "[Extracted Salary Range or empty string]",
+    "status": "SAVED",
+    "jobUrl": "${jobUrl}",
+    "description": "[Extracted Brief Description / Summary]"
+  }'
+
+Output only the code block containing the curl command and nothing else.`;
+
+    try {
+      await navigator.clipboard.writeText(promptText);
+      showFeedback("AI Prompt copied to clipboard!", "success");
+    } catch (clipErr) {
+      console.error("Clipboard copy failed:", clipErr);
+      showFeedback("Clipboard write permission blocked.", "error");
     }
   });
 

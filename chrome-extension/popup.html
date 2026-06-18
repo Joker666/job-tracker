@@ -101,7 +101,8 @@
       border-top: 2px dashed #000000;
     }
 
-    .btn-submit {
+    .btn-submit,
+    .btn-secondary {
       display: block;
       width: 100%;
       height: 40px;
@@ -110,19 +111,29 @@
       font-weight: 900;
       text-transform: uppercase;
       color: #000000;
-      background-color: #4ADE80;
       border: 3px solid #000000;
       cursor: pointer;
       box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
       transition: all 0.1s ease;
     }
 
-    .btn-submit:hover {
+    .btn-submit {
+      background-color: #4ADE80;
+    }
+
+    .btn-secondary {
+      background-color: #38BDF8;
+      margin-top: 10px;
+    }
+
+    .btn-submit:hover,
+    .btn-secondary:hover {
       transform: translate(-1px, -1px);
       box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
     }
 
-    .btn-submit:active {
+    .btn-submit:active,
+    .btn-secondary:active {
       transform: translate(1px, 1px);
       box-shadow: 1px 1px 0px 0px rgba(0,0,0,1);
     }
@@ -209,6 +220,7 @@
     </details>
 
     <button type="submit" class="btn-submit">Clip Application</button>
+    <button type="button" id="btnCopyPrompt" class="btn-secondary">📋 Copy AI Prompt</button>
   </form>
 
   <div id="statusBox" class="status-msg"></div>
