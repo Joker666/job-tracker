@@ -15,6 +15,13 @@
       "when": 1781765857536,
       "tag": "0001_daily_stature",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781766280329,
+      "tag": "0002_spotty_pride",
+      "breakpoints": true
     }
   ]
 }

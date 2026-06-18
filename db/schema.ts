@@ -18,6 +18,7 @@ export const jobApplications = pgTable("job_applications", {
   title: text("title").notNull(),
   companyName: text("company_name").notNull(),
   description: text("description").notNull().default(""),
+  jobUrl: text("job_url"),
   location: text("location").notNull().default(""),
   salaryRange: text("salary_range").notNull().default(""),
   note: text("note").notNull().default(""),

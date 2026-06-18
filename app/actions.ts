@@ -39,6 +39,7 @@ function validateRequired(input: {
   title: string;
   companyName: string;
   status: ApplicationStatus;
+  jobUrl: string | null;
 }) {
   if (!input.title) {
     return "Title is required.";
@@ -50,6 +51,14 @@ function validateRequired(input: {
 
   if (!APPLICATION_STATUSES.includes(input.status)) {
     return "Status is required.";
+  }
+
+  if (
+    input.jobUrl &&
+    !input.jobUrl.startsWith("http://") &&
+    !input.jobUrl.startsWith("https://")
+  ) {
+    return "Job URL must start with http:// or https://.";
   }
 
   return null;
@@ -64,6 +73,7 @@ function readJobForm(formData: FormData) {
     title,
     companyName,
     description: getOptionalString(formData, "description"),
+    jobUrl: getOptionalString(formData, "jobUrl") || null,
     location: getOptionalString(formData, "location"),
     salaryRange: getOptionalString(formData, "salaryRange"),
     note: getOptionalString(formData, "note"),
@@ -80,7 +90,10 @@ function readResumeFile(formData: FormData) {
 function readInterviews(formData: FormData) {
   const dates = formData.getAll("interviewDate");
   const types = formData.getAll("interviewType");
-  const interviews: Array<{ interviewDate: Date; interviewType: string }> = [];
+  const interviews: Array<{
+    interviewDate: Date;
+    interviewType: string;
+  }> = [];
 
   for (let index = 0; index < Math.max(dates.length, types.length); index += 1) {
     const dateValue = dates[index];
@@ -103,7 +116,10 @@ function readInterviews(formData: FormData) {
       throw new Error("Interview date is invalid.");
     }
 
-    interviews.push({ interviewDate, interviewType });
+    interviews.push({
+      interviewDate,
+      interviewType,
+    });
   }
 
   return interviews;

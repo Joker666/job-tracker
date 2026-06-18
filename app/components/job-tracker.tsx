@@ -42,6 +42,7 @@ export type JobApplicationView = {
   title: string;
   companyName: string;
   description: string;
+  jobUrl: string | null;
   location: string;
   salaryRange: string;
   note: string;
@@ -198,6 +199,17 @@ function JobForm({
         </label>
 
         <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
+          <span>Job URL</span>
+          <input
+            className="h-11 w-full border-2 border-black bg-white px-3 font-sans text-sm font-semibold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+            name="jobUrl"
+            type="url"
+            defaultValue={job?.jobUrl ?? ""}
+            placeholder="https://company.com/jobs/..."
+          />
+        </label>
+
+        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
           <span>Status <span className="text-red-500">*</span></span>
           <div className="relative">
             <select
@@ -273,12 +285,6 @@ function JobForm({
           </button>
         </div>
 
-        <datalist id="interview-type-options">
-          {INTERVIEW_TYPE_OPTIONS.map((option) => (
-            <option key={option} value={option} />
-          ))}
-        </datalist>
-
         <div className="space-y-3">
           {interviewRows.map((row, index) => (
             <div
@@ -296,13 +302,22 @@ function JobForm({
               </label>
               <label className="flex flex-col gap-2 font-mono text-[10px] font-black uppercase tracking-wider text-black">
                 <span>Interview Type</span>
-                <input
-                  className="h-10 w-full border-2 border-black bg-white px-3 font-sans text-sm font-semibold text-black outline-none shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all"
+                <select
+                  className="h-10 w-full border-2 border-black bg-white px-3 font-mono text-xs font-black uppercase tracking-wider text-black outline-none shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all"
                   name="interviewType"
-                  list="interview-type-options"
                   defaultValue={row.interviewType}
-                  placeholder="Technical, Behavioral..."
-                />
+                >
+                  <option value="">Select type</option>
+                  {INTERVIEW_TYPE_OPTIONS.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                  {row.interviewType &&
+                  !INTERVIEW_TYPE_OPTIONS.includes(row.interviewType) ? (
+                    <option value={row.interviewType}>{row.interviewType}</option>
+                  ) : null}
+                </select>
               </label>
               <div className="flex items-end">
                 <button
@@ -406,6 +421,8 @@ function JobCard({
   const nextInterview = job.interviews.find(
     (interview) => new Date(interview.interviewDate).getTime() >= Date.now(),
   );
+  const featuredInterview =
+    nextInterview ?? job.interviews[job.interviews.length - 1];
   const {
     attributes,
     listeners,
@@ -488,18 +505,26 @@ function JobCard({
             </span>
           </div>
           <p className="font-mono text-[11px] font-bold leading-normal text-black/80">
-            {nextInterview
-              ? `${nextInterview.interviewType} · ${formatInterviewDate(
-                  nextInterview.interviewDate,
+            {featuredInterview
+              ? `${featuredInterview.interviewType} · ${formatInterviewDate(
+                  featuredInterview.interviewDate,
                 )}`
-              : `${job.interviews[job.interviews.length - 1].interviewType} · ${formatInterviewDate(
-                  job.interviews[job.interviews.length - 1].interviewDate,
-                )}`}
+              : null}
           </p>
         </div>
       ) : null}
 
       <div className="mt-5 flex flex-wrap items-center gap-2 border-t-2 border-black/10 pt-3">
+        {job.jobUrl ? (
+          <a
+            className="inline-flex items-center justify-center border border-black bg-[#FFDE4D] px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all"
+            href={job.jobUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Job Post
+          </a>
+        ) : null}
         {job.resumeUrl ? (
           <a
             className="inline-flex items-center justify-center border border-black bg-[#38BDF8] px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all"
