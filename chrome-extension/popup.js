@@ -181,7 +181,7 @@ curl -X POST "${hostUrl}/api/jobs" \\
 \\\\n\\\\nREQUIRED QUALIFICATIONS & SKILLS (WHAT IS NEEDED)\\\\n- [Must-have skill/tech/experience 1]\\\\n- [Must-have skill/tech/experience 2]
 \\\\n\\\\nNICE-TO-HAVE / PREFERRED QUALIFICATIONS\\\\n- [Nice-to-have skill/tech/experience 1]\\\\n- [Nice-to-have skill/tech/experience 2]
 
-Ensure the text uses clean newlines (\\\\n) and bullet points (-) for readability inside the JSON string. All double-quotes inside the description text must be escaped as \\\\\" so the JSON payload remains valid.]"
+Ensure the text uses clean newlines (\\\\n) and bullet points (-) for readability inside the JSON string. All double-quotes inside the description text must be escaped as \\\\" so the JSON payload remains valid.]"
   }'
 
 Output only the code block containing the curl command and nothing else.`;

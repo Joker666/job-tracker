@@ -146,12 +146,12 @@ export function JobDetailPageContent({ job }: { job: JobApplicationView }) {
           {/* Details Content Grid */}
           <div className="grid gap-8 md:grid-cols-3">
             {/* Left Columns - Personal Notes */}
-            <div className="md:col-span-2">
-              <div className="border-2 border-black bg-white p-5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] h-full">
-                <h3 className="font-mono text-xs font-black uppercase tracking-wider text-black mb-3 pb-2 border-b border-black/10">
+            <div className="md:col-span-2 md:h-0 md:min-h-full">
+              <div className="border-2 border-black bg-white p-5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] h-full flex flex-col">
+                <h3 className="font-mono text-xs font-black uppercase tracking-wider text-black mb-3 pb-2 border-b border-black/10 flex-shrink-0">
                   // Personal Notes & Log
                 </h3>
-                <div className="text-sm font-medium leading-relaxed whitespace-pre-wrap text-black/90 min-h-[160px]">
+                <div className="text-sm font-medium leading-relaxed whitespace-pre-wrap text-black/90 min-h-[160px] md:min-h-0 md:flex-1 md:overflow-y-auto">
                   {job.note || (
                     <span className="font-mono text-xs font-bold text-black/40 uppercase">
                       No notes added yet.
