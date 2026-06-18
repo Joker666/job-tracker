@@ -10,9 +10,7 @@ export default function Error({
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#f4f3ef] px-4 text-black font-sans">
       <div className="max-w-md border-4 border-black bg-white p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-        <h1 className="font-mono text-lg font-black uppercase tracking-wider">
-          :: System Error
-        </h1>
+        <h1 className="font-mono text-lg font-black uppercase tracking-wider">:: System Error</h1>
         <p className="mt-4 font-mono text-xs font-bold uppercase tracking-wider text-black/60">
           // could not load jobs
         </p>

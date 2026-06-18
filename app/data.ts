@@ -3,10 +3,7 @@ import { db } from "@/db";
 import { jobApplications, jobInterviews } from "@/db/schema";
 
 export async function getJobApplications() {
-  const jobs = await db
-    .select()
-    .from(jobApplications)
-    .orderBy(desc(jobApplications.createdAt));
+  const jobs = await db.select().from(jobApplications).orderBy(desc(jobApplications.createdAt));
 
   if (jobs.length === 0) {
     return [];

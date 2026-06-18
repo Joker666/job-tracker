@@ -1,11 +1,11 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { jobApplications, jobInterviews } from "@/db/schema";
-import { APPLICATION_STATUSES, type ApplicationStatus } from "@/lib/status";
 import { uploadResumePdf } from "@/lib/r2";
+import { APPLICATION_STATUSES, type ApplicationStatus } from "@/lib/status";
 
 type ActionResult = {
   ok: boolean;
@@ -52,10 +52,7 @@ function getOptionalString(formData: FormData, key: string) {
 }
 
 function parseStatus(value: FormDataEntryValue | null): ApplicationStatus {
-  if (
-    typeof value === "string" &&
-    APPLICATION_STATUSES.includes(value as ApplicationStatus)
-  ) {
+  if (typeof value === "string" && APPLICATION_STATUSES.includes(value as ApplicationStatus)) {
     return value as ApplicationStatus;
   }
 
@@ -80,11 +77,7 @@ function validateRequired(input: {
     return "Status is required.";
   }
 
-  if (
-    input.jobUrl &&
-    !input.jobUrl.startsWith("http://") &&
-    !input.jobUrl.startsWith("https://")
-  ) {
+  if (input.jobUrl && !input.jobUrl.startsWith("http://") && !input.jobUrl.startsWith("https://")) {
     return "Job URL must start with http:// or https://.";
   }
 
@@ -126,8 +119,7 @@ function readInterviews(formData: FormData) {
     const dateValue = dates[index];
     const typeValue = types[index];
     const rawDate = typeof dateValue === "string" ? dateValue.trim() : "";
-    const interviewType =
-      typeof typeValue === "string" ? typeValue.trim() : "";
+    const interviewType = typeof typeValue === "string" ? typeValue.trim() : "";
 
     if (!rawDate && !interviewType) {
       continue;
@@ -163,8 +155,8 @@ export async function createJobApplication(
     return { ok: false, error: validationError };
   }
 
-  let resume;
-  let interviews;
+  let resume: Awaited<ReturnType<typeof uploadResumePdf>> = null;
+  let interviews: ReturnType<typeof readInterviews> = [];
 
   try {
     resume = await uploadResumePdf(readResumeFile(formData));
@@ -212,8 +204,8 @@ export async function updateJobApplication(
     return { ok: false, error: validationError };
   }
 
-  let resume;
-  let interviews;
+  let resume: Awaited<ReturnType<typeof uploadResumePdf>> = null;
+  let interviews: ReturnType<typeof readInterviews> = [];
 
   try {
     resume = await uploadResumePdf(readResumeFile(formData));
@@ -235,9 +227,7 @@ export async function updateJobApplication(
       })
       .where(eq(jobApplications.id, id));
 
-    await tx
-      .delete(jobInterviews)
-      .where(eq(jobInterviews.jobApplicationId, id));
+    await tx.delete(jobInterviews).where(eq(jobInterviews.jobApplicationId, id));
 
     if (interviews.length > 0) {
       await tx.insert(jobInterviews).values(
@@ -259,10 +249,7 @@ export async function deleteJobApplication(id: string) {
   revalidatePath("/");
 }
 
-export async function updateJobApplicationStatus(
-  id: string,
-  status: ApplicationStatus,
-) {
+export async function updateJobApplicationStatus(id: string, status: ApplicationStatus) {
   if (!APPLICATION_STATUSES.includes(status)) {
     return { ok: false, error: "Invalid status." };
   }
