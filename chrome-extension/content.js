@@ -38,12 +38,8 @@ function parsePage() {
     location = document.querySelector(".location")?.innerText || "";
   } else if (url.includes("ashbyhq.com") || document.querySelector("[class*='ashby']")) {
     title = document.querySelector("h1")?.innerText || "";
-    company = document.title.split("-")[0]?.trim() || "";
-    // Ashby common location classes
-    const locEl =
-      document.querySelector("[class*='location']") ||
-      document.querySelector("[class*='JobPostingHeader'] p");
-    location = locEl?.innerText || "";
+    company = inferCompanyFromPageTitle(document.title, title);
+    location = findLocationCandidate(title, company);
   } else if (url.includes("bamboohr.com") || url.includes("bamboohr.co")) {
     title =
       document.querySelector("h2")?.innerText || document.querySelector("h1")?.innerText || "";
@@ -146,10 +142,22 @@ function parsePage() {
   }
 
   // Final Sanitization
+  title = sanitize(title);
+  company = sanitize(company);
+  location = sanitize(location);
+
+  if (company && title && company.toLowerCase().includes(title.toLowerCase())) {
+    company = inferCompanyFromPageTitle(company, title);
+  }
+
+  if (location && title && location.toLowerCase().includes(title.toLowerCase())) {
+    location = "";
+  }
+
   return {
-    title: sanitize(title),
-    company: sanitize(company),
-    location: sanitize(location),
+    title,
+    company,
+    location,
     salary: sanitize(salary),
     description: description.trim(),
   };
@@ -157,4 +165,80 @@ function parsePage() {
 
 function sanitize(str) {
   return str ? str.replace(/\n/g, " ").replace(/\s+/g, " ").trim() : "";
+}
+
+function inferCompanyFromPageTitle(pageTitle, jobTitle) {
+  const normalizedTitle = sanitize(pageTitle);
+  const normalizedJobTitle = sanitize(jobTitle);
+
+  if (!normalizedTitle) return "";
+
+  const atMatch = normalizedTitle.match(/\s[@]\s(.+?)(?:\s[-|]\s|$)/);
+  if (atMatch) return sanitize(atMatch[1]);
+
+  const atWordMatch = normalizedTitle.match(/\sat\s(.+?)(?:\s[-|]\s|$)/i);
+  if (atWordMatch) return sanitize(atWordMatch[1]);
+
+  if (normalizedJobTitle && normalizedTitle.startsWith(normalizedJobTitle)) {
+    return sanitize(
+      normalizedTitle
+        .slice(normalizedJobTitle.length)
+        .replace(/^(\s*[-|@]\s*|\s+at\s+)/i, ""),
+    );
+  }
+
+  return "";
+}
+
+function findLocationCandidate(jobTitle, company) {
+  const normalizedTitle = sanitize(jobTitle).toLowerCase();
+  const normalizedCompany = sanitize(company).toLowerCase();
+  const selectors = [
+    "[class*='location']",
+    "[data-testid*='location']",
+    "[aria-label*='location' i]",
+    "span",
+    "p",
+    "div",
+  ];
+
+  const seen = new Set();
+
+  for (const selector of selectors) {
+    const elements = Array.from(document.querySelectorAll(selector));
+
+    for (const element of elements) {
+      const text = sanitize(element.innerText);
+      const lowerText = text.toLowerCase();
+
+      if (
+        !text ||
+        seen.has(text) ||
+        text.length > 80 ||
+        (normalizedTitle && lowerText.includes(normalizedTitle)) ||
+        (normalizedCompany && normalizedTitle && lowerText.includes(normalizedCompany) && lowerText.includes(normalizedTitle))
+      ) {
+        continue;
+      }
+
+      seen.add(text);
+
+      if (looksLikeLocation(text)) {
+        return text;
+      }
+    }
+  }
+
+  return "";
+}
+
+function looksLikeLocation(text) {
+  return (
+    text.includes("Remote") ||
+    text.includes("Hybrid") ||
+    text.includes("On-site") ||
+    text.includes("Onsite") ||
+    /^[A-Z][a-zA-Z\s.'-]+,\s*[A-Z]{2}(?:,\s*[A-Za-z\s]+)?$/.test(text) ||
+    /^[A-Z][a-zA-Z\s.'-]+,\s*[A-Z][a-zA-Z\s.'-]+$/.test(text)
+  );
 }
