@@ -168,7 +168,7 @@ function JobForm({
           <span>Resume PDF</span>
           <input
             accept="application/pdf,.pdf"
-            className="block h-11 w-full border-2 border-black bg-white px-3 py-1.5 text-sm font-semibold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all file:mr-3 file:border-r file:border-t-0 file:border-b-0 file:border-l-0 file:border-black file:bg-[#38BDF8] file:px-3 file:py-1 file:font-mono file:text-xs file:font-black file:uppercase file:-ml-3 file:h-10 file:cursor-pointer"
+            className="block w-full border-2 border-black bg-white text-xs font-semibold text-black/60 outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all file:mr-4 file:border-0 file:border-r-2 file:border-black file:bg-[#38BDF8] file:px-4 file:py-3 file:font-mono file:text-xs file:font-black file:uppercase file:text-black hover:file:bg-[#7dd3fc] cursor-pointer"
             name="resume"
             type="file"
           />
