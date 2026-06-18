@@ -175,7 +175,13 @@ curl -X POST "${hostUrl}/api/jobs" \\
     "salaryRange": "[Extracted Salary Range or empty string]",
     "status": "SAVED",
     "jobUrl": "${jobUrl}",
-    "description": "[Extracted Brief Description / Summary]"
+    "description": "[Extracted Rich Job Description. You MUST extract and organize the details into the following sections using clear titles and formatting:
+\\\\n\\\\nROLE OVERVIEW\\\\n[Brief overview of the role and team]
+\\\\n\\\\nKEY RESPONSIBILITIES\\\\n- [Responsibility 1]\\\\n- [Responsibility 2]
+\\\\n\\\\nREQUIRED QUALIFICATIONS & SKILLS (WHAT IS NEEDED)\\\\n- [Must-have skill/tech/experience 1]\\\\n- [Must-have skill/tech/experience 2]
+\\\\n\\\\nNICE-TO-HAVE / PREFERRED QUALIFICATIONS\\\\n- [Nice-to-have skill/tech/experience 1]\\\\n- [Nice-to-have skill/tech/experience 2]
+
+Ensure the text uses clean newlines (\\\\n) and bullet points (-) for readability inside the JSON string. All double-quotes inside the description text must be escaped as \\\\\" so the JSON payload remains valid.]"
   }'
 
 Output only the code block containing the curl command and nothing else.`;
