@@ -67,36 +67,17 @@ export function JobListView({
                       onClick={() => onViewDetails(job)}
                       className="px-6 py-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between hover:bg-yellow-50/50 cursor-pointer transition-colors"
                     >
-                      {/* Left: Role, Company, Location, Salary */}
+                      {/* Left: Role, Company */}
                       <div className="flex-1 min-w-0">
                         <h4 className="font-mono text-sm font-black uppercase tracking-tight line-clamp-1">
                           {job.title}
                         </h4>
-                        <p className="font-mono text-xs font-bold text-black/60 mt-0.5 mb-2.5">
+                        <p className="font-mono text-xs font-bold text-black/60 mt-0.5">
                           {job.companyName}
                         </p>
-
-                        <div className="flex flex-wrap gap-2">
-                          {job.location ? (
-                            <div className="flex items-center gap-1.5 font-mono text-[10px] font-semibold text-black/75">
-                              <span className="uppercase text-[8px] font-bold px-1 py-0.5 border border-black bg-white shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
-                                Loc
-                              </span>
-                              <span>{job.location}</span>
-                            </div>
-                          ) : null}
-                          {job.salaryRange ? (
-                            <div className="flex items-center gap-1.5 font-mono text-[10px] font-semibold text-black/75">
-                              <span className="uppercase text-[8px] font-bold px-1 py-0.5 border border-black bg-[#4ADE80] shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
-                                Sal
-                              </span>
-                              <span>{job.salaryRange}</span>
-                            </div>
-                          ) : null}
-                        </div>
                       </div>
 
-                      {/* Right: Interview Timeline & Links */}
+                      {/* Right: Location & Salary, Interview Timeline, Links */}
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6 shrink-0">
                         {/* Interview info */}
                         {featuredInterview ? (
@@ -110,31 +91,27 @@ export function JobListView({
                           </div>
                         ) : null}
 
-                        {/* Direct links */}
-                        <div className="flex gap-2">
-                          {job.jobUrl ? (
-                            <a
-                              className="inline-flex items-center justify-center border border-black bg-[#FFDE4D] px-2.5 py-1 font-mono text-[9px] font-black uppercase tracking-wider text-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[0.5px_0.5px_0px_0px_rgba(0,0,0,1)] transition-all"
-                              href={job.jobUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              Post
-                            </a>
-                          ) : null}
-                          {job.resumeUrl ? (
-                            <a
-                              className="inline-flex items-center justify-center border border-black bg-[#38BDF8] px-2.5 py-1 font-mono text-[9px] font-black uppercase tracking-wider text-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[0.5px_0.5px_0px_0px_rgba(0,0,0,1)] transition-all"
-                              href={job.resumeUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              Resume
-                            </a>
-                          ) : null}
-                        </div>
+                        {/* Location & Salary */}
+                        {job.location || job.salaryRange ? (
+                          <div className="flex flex-col gap-1.5 min-w-[120px]">
+                            {job.location ? (
+                              <div className="flex items-center gap-1.5 font-mono text-[10px] font-semibold text-black/75">
+                                <span className="uppercase text-[8px] font-bold px-1 py-0.5 border border-black bg-white shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+                                  Loc
+                                </span>
+                                <span className="truncate max-w-[120px]">{job.location}</span>
+                              </div>
+                            ) : null}
+                            {job.salaryRange ? (
+                              <div className="flex items-center gap-1.5 font-mono text-[10px] font-semibold text-black/75">
+                                <span className="uppercase text-[8px] font-bold px-1 py-0.5 border border-black bg-[#4ADE80] shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+                                  Sal
+                                </span>
+                                <span className="truncate max-w-[120px]">{job.salaryRange}</span>
+                              </div>
+                            ) : null}
+                          </div>
+                        ) : null}
                       </div>
                     </div>
                   );

@@ -93,33 +93,6 @@ export function JobCard({
           </p>
         </div>
       ) : null}
-
-      {job.jobUrl || job.resumeUrl ? (
-        <div className="mt-5 flex flex-wrap items-center gap-2 border-t-2 border-black/10 pt-3">
-          {job.jobUrl ? (
-            <a
-              className="inline-flex items-center justify-center border border-black bg-[#FFDE4D] px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all"
-              href={job.jobUrl}
-              target="_blank"
-              rel="noreferrer"
-              onClick={(e) => e.stopPropagation()}
-            >
-              Job Post
-            </a>
-          ) : null}
-          {job.resumeUrl ? (
-            <a
-              className="inline-flex items-center justify-center border border-black bg-[#38BDF8] px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all"
-              href={job.resumeUrl}
-              target="_blank"
-              rel="noreferrer"
-              onClick={(e) => e.stopPropagation()}
-            >
-              Resume
-            </a>
-          ) : null}
-        </div>
-      ) : null}
     </article>
   );
 }
