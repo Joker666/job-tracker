@@ -22,8 +22,8 @@ export function AccessModal({ onGranted }: { onGranted: () => void }) {
   }, [onGranted, state.ok]);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 px-4 py-8 backdrop-blur-[2px]">
-      <div className="w-full max-w-md border-4 border-black bg-[#f4f3ef] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+    <div className="fixed inset-0 z-[100] flex sm:items-center justify-center bg-black/80 sm:px-4 sm:py-8 backdrop-blur-[2px] overflow-y-auto overscroll-contain">
+      <div className="w-full min-h-screen sm:min-h-0 sm:max-w-md border-0 sm:border-4 border-black bg-[#f4f3ef] p-6 shadow-none sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col justify-center">
         <div className="mb-6 border-b-2 border-black pb-4">
           <div className="inline-block border-2 border-black bg-[#FFDE4D] px-3 py-1 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
             Access Required

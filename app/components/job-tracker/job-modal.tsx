@@ -15,8 +15,8 @@ export function JobModal({ mode, onClose }: { mode: FormMode; onClose: () => voi
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain bg-black/60 px-4 py-8 backdrop-blur-[2px]">
-      <div className="w-full max-w-2xl border-4 border-black bg-[#f4f3ef] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:p-8">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain bg-black/60 sm:px-4 sm:py-8 backdrop-blur-[2px]">
+      <div className="w-full min-h-screen sm:min-h-0 sm:max-w-2xl border-0 sm:border-4 border-black bg-[#f4f3ef] p-6 shadow-none sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:p-8">
         <div className="mb-6 flex items-center justify-between gap-4 border-b-2 border-black pb-4">
           <h2 className="font-mono text-lg font-black uppercase tracking-wider text-black">
             {mode.type === "edit" ? ":: Edit Job Application" : ":: New Job Application"}

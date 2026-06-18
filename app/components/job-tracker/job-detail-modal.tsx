@@ -51,8 +51,8 @@ export function JobDetailModal({
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain bg-black/60 px-4 py-8 backdrop-blur-[2px]">
-      <div className="w-full max-w-2xl border-4 border-black bg-[#f4f3ef] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:p-8 relative">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain bg-black/60 sm:px-4 sm:py-8 backdrop-blur-[2px]">
+      <div className="w-full min-h-screen sm:min-h-0 sm:max-w-2xl border-0 sm:border-4 border-black bg-[#f4f3ef] p-6 shadow-none sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:p-8 relative">
         {/* Header */}
         <div className="mb-6 flex flex-col gap-4 border-b-2 border-black pb-5">
           <div className="flex items-start justify-between gap-4">
