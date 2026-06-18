@@ -115,7 +115,7 @@ export function JobTracker({ jobs }: TrackerProps) {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex gap-2">
+            <div className="hidden sm:flex gap-2">
               <button
                 type="button"
                 onClick={() => setViewMode("kanban")}
@@ -151,8 +151,9 @@ export function JobTracker({ jobs }: TrackerProps) {
           </div>
         ) : null}
 
-        {viewMode === "kanban" ? (
-          <div className="-mx-4 overflow-x-auto px-4 pb-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+        {/* Kanban View - Desktop/Tablet only */}
+        {viewMode === "kanban" && (
+          <div className="hidden sm:block -mx-4 overflow-x-auto px-4 pb-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
             <DndContext id="job-tracker-kanban" sensors={sensors} onDragEnd={handleDragEnd}>
               <section
                 className={`grid gap-6 sm:grid-cols-2 lg:min-w-[1496px] lg:grid-cols-5 ${
@@ -171,13 +172,16 @@ export function JobTracker({ jobs }: TrackerProps) {
               </section>
             </DndContext>
           </div>
-        ) : (
+        )}
+
+        {/* List View - Mobile default, and desktop when selected */}
+        <div className={viewMode === "list" ? "block" : "block sm:hidden"}>
           <JobListView
             jobs={optimisticJobs}
             onViewDetails={(selectedJob) => setDetailJob(selectedJob)}
             nowMs={nowMs}
           />
-        )}
+        </div>
       </div>
 
       {modal ? <JobModal mode={modal} onClose={() => setModal(null)} /> : null}
