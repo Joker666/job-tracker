@@ -15,6 +15,7 @@ import { APPLICATION_STATUSES } from "@/lib/status";
 import { AccessCheckingOverlay, AccessModal } from "./access-modal";
 import { ACCESS_STORAGE_KEY } from "./constants";
 import { JobDetailModal } from "./job-detail-modal";
+import { JobListView } from "./job-list";
 import { JobModal } from "./job-modal";
 import { KanbanColumn } from "./kanban-column";
 import type { FormMode, JobApplicationView, TrackerProps } from "./types";
@@ -30,6 +31,7 @@ export function JobTracker({ jobs }: TrackerProps) {
   const [nowMs, setNowMs] = useState<number | null>(null);
   const [statusError, setStatusError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
 
   const [optimisticJobs, setOptimisticJobs] = useOptimistic(
     jobs,
@@ -112,13 +114,35 @@ export function JobTracker({ jobs }: TrackerProps) {
               // MONITOR PIPELINES, SUBMITTED RESUMES, AND OFFERS
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => setModal({ type: "create" })}
-            className="inline-flex h-12 items-center justify-center border-3 border-black bg-[#4ADE80] px-6 text-sm font-black uppercase tracking-wider text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
-          >
-            + Create Application
-          </button>
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setViewMode("kanban")}
+                className={`h-12 border-3 border-black px-4 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
+                  viewMode === "kanban" ? "bg-[#FFDE4D]" : "bg-white"
+                }`}
+              >
+                Kanban
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("list")}
+                className={`h-12 border-3 border-black px-4 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
+                  viewMode === "list" ? "bg-[#FFDE4D]" : "bg-white"
+                }`}
+              >
+                List View
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={() => setModal({ type: "create" })}
+              className="inline-flex h-12 items-center justify-center border-3 border-black bg-[#4ADE80] px-6 text-sm font-black uppercase tracking-wider text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+            >
+              + Create Application
+            </button>
+          </div>
         </header>
 
         {statusError ? (
@@ -127,25 +151,33 @@ export function JobTracker({ jobs }: TrackerProps) {
           </div>
         ) : null}
 
-        <div className="-mx-4 overflow-x-auto px-4 pb-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-          <DndContext id="job-tracker-kanban" sensors={sensors} onDragEnd={handleDragEnd}>
-            <section
-              className={`grid gap-6 sm:grid-cols-2 lg:min-w-[1496px] lg:grid-cols-5 ${
-                isPending ? "opacity-80" : ""
-              }`}
-            >
-              {jobsByStatus.map(({ status, jobs: statusJobs }) => (
-                <KanbanColumn
-                  key={status}
-                  status={status}
-                  jobs={statusJobs}
-                  onViewDetails={(selectedJob) => setDetailJob(selectedJob)}
-                  nowMs={nowMs}
-                />
-              ))}
-            </section>
-          </DndContext>
-        </div>
+        {viewMode === "kanban" ? (
+          <div className="-mx-4 overflow-x-auto px-4 pb-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+            <DndContext id="job-tracker-kanban" sensors={sensors} onDragEnd={handleDragEnd}>
+              <section
+                className={`grid gap-6 sm:grid-cols-2 lg:min-w-[1496px] lg:grid-cols-5 ${
+                  isPending ? "opacity-80" : ""
+                }`}
+              >
+                {jobsByStatus.map(({ status, jobs: statusJobs }) => (
+                  <KanbanColumn
+                    key={status}
+                    status={status}
+                    jobs={statusJobs}
+                    onViewDetails={(selectedJob) => setDetailJob(selectedJob)}
+                    nowMs={nowMs}
+                  />
+                ))}
+              </section>
+            </DndContext>
+          </div>
+        ) : (
+          <JobListView
+            jobs={optimisticJobs}
+            onViewDetails={(selectedJob) => setDetailJob(selectedJob)}
+            nowMs={nowMs}
+          />
+        )}
       </div>
 
       {modal ? <JobModal mode={modal} onClose={() => setModal(null)} /> : null}
