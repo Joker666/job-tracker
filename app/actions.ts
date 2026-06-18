@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { jobApplications } from "@/db/schema";
+import { jobApplications, jobInterviews } from "@/db/schema";
 import { APPLICATION_STATUSES, type ApplicationStatus } from "@/lib/status";
 import { uploadResumePdf } from "@/lib/r2";
 
@@ -77,6 +77,38 @@ function readResumeFile(formData: FormData) {
   return file instanceof File ? file : null;
 }
 
+function readInterviews(formData: FormData) {
+  const dates = formData.getAll("interviewDate");
+  const types = formData.getAll("interviewType");
+  const interviews: Array<{ interviewDate: Date; interviewType: string }> = [];
+
+  for (let index = 0; index < Math.max(dates.length, types.length); index += 1) {
+    const dateValue = dates[index];
+    const typeValue = types[index];
+    const rawDate = typeof dateValue === "string" ? dateValue.trim() : "";
+    const interviewType =
+      typeof typeValue === "string" ? typeValue.trim() : "";
+
+    if (!rawDate && !interviewType) {
+      continue;
+    }
+
+    if (!rawDate || !interviewType) {
+      throw new Error("Each interview needs both a date and a type.");
+    }
+
+    const interviewDate = new Date(rawDate);
+
+    if (Number.isNaN(interviewDate.getTime())) {
+      throw new Error("Interview date is invalid.");
+    }
+
+    interviews.push({ interviewDate, interviewType });
+  }
+
+  return interviews;
+}
+
 export async function createJobApplication(
   _previousState: ActionResult,
   formData: FormData,
@@ -89,20 +121,37 @@ export async function createJobApplication(
   }
 
   let resume;
+  let interviews;
 
   try {
     resume = await uploadResumePdf(readResumeFile(formData));
+    interviews = readInterviews(formData);
   } catch (error) {
     return {
       ok: false,
-      error: error instanceof Error ? error.message : "Resume upload failed.",
+      error: error instanceof Error ? error.message : "Save failed.",
     };
   }
 
-  await db.insert(jobApplications).values({
-    ...job,
-    ...(resume ?? {}),
+  await db.transaction(async (tx) => {
+    const [createdJob] = await tx
+      .insert(jobApplications)
+      .values({
+        ...job,
+        ...(resume ?? {}),
+      })
+      .returning({ id: jobApplications.id });
+
+    if (interviews.length > 0) {
+      await tx.insert(jobInterviews).values(
+        interviews.map((interview) => ({
+          ...interview,
+          jobApplicationId: createdJob.id,
+        })),
+      );
+    }
   });
+
   revalidatePath("/");
 
   return { ok: true };
@@ -121,24 +170,41 @@ export async function updateJobApplication(
   }
 
   let resume;
+  let interviews;
 
   try {
     resume = await uploadResumePdf(readResumeFile(formData));
+    interviews = readInterviews(formData);
   } catch (error) {
     return {
       ok: false,
-      error: error instanceof Error ? error.message : "Resume upload failed.",
+      error: error instanceof Error ? error.message : "Save failed.",
     };
   }
 
-  await db
-    .update(jobApplications)
-    .set({
-      ...job,
-      ...(resume ?? {}),
-      updatedAt: new Date(),
-    })
-    .where(eq(jobApplications.id, id));
+  await db.transaction(async (tx) => {
+    await tx
+      .update(jobApplications)
+      .set({
+        ...job,
+        ...(resume ?? {}),
+        updatedAt: new Date(),
+      })
+      .where(eq(jobApplications.id, id));
+
+    await tx
+      .delete(jobInterviews)
+      .where(eq(jobInterviews.jobApplicationId, id));
+
+    if (interviews.length > 0) {
+      await tx.insert(jobInterviews).values(
+        interviews.map((interview) => ({
+          ...interview,
+          jobApplicationId: id,
+        })),
+      );
+    }
+  });
 
   revalidatePath("/");
 

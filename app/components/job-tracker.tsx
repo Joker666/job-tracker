@@ -31,6 +31,12 @@ type ActionState = {
   error?: string;
 };
 
+type JobInterviewView = {
+  id: string;
+  interviewDate: string;
+  interviewType: string;
+};
+
 export type JobApplicationView = {
   id: string;
   title: string;
@@ -45,6 +51,7 @@ export type JobApplicationView = {
   resumeUploadedAt: string | null;
   createdAt: string;
   updatedAt: string;
+  interviews: JobInterviewView[];
 };
 
 type TrackerProps = {
@@ -56,6 +63,48 @@ type FormMode =
   | { type: "edit"; job: JobApplicationView };
 
 const initialActionState: ActionState = { ok: false };
+const INTERVIEW_TYPE_OPTIONS = [
+  "Recruiter screen",
+  "Behavioral",
+  "Technical",
+  "System design",
+  "Take-home",
+  "Hiring manager",
+  "Final",
+];
+
+function createInterviewRow(interview?: JobInterviewView) {
+  return {
+    key: interview?.id ?? `new-${Date.now()}-${Math.random()}`,
+    interviewDate: interview?.interviewDate ?? "",
+    interviewType: interview?.interviewType ?? "",
+  };
+}
+
+function toDateTimeLocal(value: string) {
+  if (!value) {
+    return "";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+
+  return offsetDate.toISOString().slice(0, 16);
+}
+
+function formatInterviewDate(value: string) {
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
 
 const STATUS_COLORS: Record<
   ApplicationStatus,
@@ -81,6 +130,11 @@ function JobForm({
     mode.type === "edit"
       ? updateJobApplication.bind(null, mode.job.id)
       : createJobApplication;
+  const [interviewRows, setInterviewRows] = useState(() =>
+    job?.interviews.length
+      ? job.interviews.map(createInterviewRow)
+      : [createInterviewRow()],
+  );
   const [state, formAction, pending] = useActionState(
     action,
     initialActionState,
@@ -195,6 +249,82 @@ function JobForm({
         />
       </label>
 
+      <section className="border-2 border-black bg-[#FFFDEB] p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 className="font-mono text-sm font-black uppercase tracking-wider text-black">
+              Interview Tracking
+            </h3>
+            <p className="mt-1 font-mono text-[10px] font-bold uppercase tracking-wider text-black/55">
+              Add every scheduled round, not just the next one.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() =>
+              setInterviewRows((currentRows) => [
+                ...currentRows,
+                createInterviewRow(),
+              ])
+            }
+            className="inline-flex h-9 items-center justify-center border-2 border-black bg-[#38BDF8] px-3 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+          >
+            + Add Round
+          </button>
+        </div>
+
+        <datalist id="interview-type-options">
+          {INTERVIEW_TYPE_OPTIONS.map((option) => (
+            <option key={option} value={option} />
+          ))}
+        </datalist>
+
+        <div className="space-y-3">
+          {interviewRows.map((row, index) => (
+            <div
+              key={row.key}
+              className="grid gap-3 border-2 border-black bg-white p-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:grid-cols-[1fr_1fr_auto]"
+            >
+              <label className="flex flex-col gap-2 font-mono text-[10px] font-black uppercase tracking-wider text-black">
+                <span>Interview Date</span>
+                <input
+                  className="h-10 w-full border-2 border-black bg-white px-3 font-sans text-sm font-semibold text-black outline-none shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all"
+                  name="interviewDate"
+                  type="datetime-local"
+                  defaultValue={toDateTimeLocal(row.interviewDate)}
+                />
+              </label>
+              <label className="flex flex-col gap-2 font-mono text-[10px] font-black uppercase tracking-wider text-black">
+                <span>Interview Type</span>
+                <input
+                  className="h-10 w-full border-2 border-black bg-white px-3 font-sans text-sm font-semibold text-black outline-none shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all"
+                  name="interviewType"
+                  list="interview-type-options"
+                  defaultValue={row.interviewType}
+                  placeholder="Technical, Behavioral..."
+                />
+              </label>
+              <div className="flex items-end">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setInterviewRows((currentRows) =>
+                      currentRows.length === 1
+                        ? [createInterviewRow()]
+                        : currentRows.filter((candidate) => candidate.key !== row.key),
+                    )
+                  }
+                  className="h-10 w-full border-2 border-black bg-[#FB7185] px-3 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+                  aria-label={`Remove interview row ${index + 1}`}
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {job?.resumeUrl ? (
         <div className="flex">
           <a
@@ -235,8 +365,17 @@ function JobModal({
   mode: FormMode;
   onClose: () => void;
 }) {
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 px-4 py-8 backdrop-blur-[2px]">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain bg-black/60 px-4 py-8 backdrop-blur-[2px]">
       <div className="w-full max-w-2xl border-4 border-black bg-[#f4f3ef] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:p-8">
         <div className="mb-6 flex items-center justify-between gap-4 border-b-2 border-black pb-4">
           <h2 className="font-mono text-lg font-black uppercase tracking-wider text-black">
@@ -264,6 +403,9 @@ function JobCard({
   onEdit: (job: JobApplicationView) => void;
 }) {
   const notePreview = job.note || job.description;
+  const nextInterview = job.interviews.find(
+    (interview) => new Date(interview.interviewDate).getTime() >= Date.now(),
+  );
   const {
     attributes,
     listeners,
@@ -331,6 +473,28 @@ function JobCard({
         <div className="mt-3 border border-black bg-white p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
           <p className="line-clamp-2 text-xs leading-normal font-sans font-medium text-black/80">
             {notePreview}
+          </p>
+        </div>
+      ) : null}
+
+      {job.interviews.length > 0 ? (
+        <div className="mt-3 border border-black bg-[#FFFDEB] p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <div className="mb-1 flex items-center justify-between gap-2">
+            <span className="font-mono text-[9px] font-black uppercase tracking-wider text-black">
+              Interviews
+            </span>
+            <span className="border border-black bg-white px-1.5 py-0.5 font-mono text-[9px] font-black text-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+              {job.interviews.length}
+            </span>
+          </div>
+          <p className="font-mono text-[11px] font-bold leading-normal text-black/80">
+            {nextInterview
+              ? `${nextInterview.interviewType} · ${formatInterviewDate(
+                  nextInterview.interviewDate,
+                )}`
+              : `${job.interviews[job.interviews.length - 1].interviewType} · ${formatInterviewDate(
+                  job.interviews[job.interviews.length - 1].interviewDate,
+                )}`}
           </p>
         </div>
       ) : null}
@@ -521,4 +685,3 @@ export function JobTracker({ jobs }: TrackerProps) {
     </main>
   );
 }
-

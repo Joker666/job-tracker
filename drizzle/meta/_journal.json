@@ -8,6 +8,13 @@
       "when": 1781764032645,
       "tag": "0000_foamy_ezekiel_stane",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1781765857536,
+      "tag": "0001_daily_stature",
+      "breakpoints": true
     }
   ]
 }

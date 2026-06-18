@@ -9,6 +9,7 @@ A minimal Next.js App Router job tracker with Drizzle ORM, Neon Postgres, Cloudf
 - Drag-and-drop status updates persisted to Postgres.
 - One submitted resume PDF per job, stored in Cloudflare R2.
 - Resume metadata stored directly on `job_applications`: `resume_url`, `resume_name`, and `resume_uploaded_at`.
+- Multiple interviews per job, each with an interview date and type.
 
 ## Environment
 
@@ -52,6 +53,12 @@ The initial migration creates:
 
 - `application_status` enum with `SAVED`, `APPLIED`, `INTERVIEWING`, `OFFER`, `REJECTED`
 - `job_applications` table
+
+The interview tracking migration creates:
+
+- `job_interviews` table
+- `job_interviews.job_application_id` foreign key with cascade delete
+- `interview_date` and `interview_type` fields for each interview round
 
 ## Cloudflare R2 setup
 

@@ -6,12 +6,19 @@ import {
 
 export const dynamic = "force-dynamic";
 
-function serializeJob(job: Awaited<ReturnType<typeof getJobApplications>>[number]): JobApplicationView {
+function serializeJob(
+  job: Awaited<ReturnType<typeof getJobApplications>>[number],
+): JobApplicationView {
   return {
     ...job,
     resumeUploadedAt: job.resumeUploadedAt?.toISOString() ?? null,
     createdAt: job.createdAt.toISOString(),
     updatedAt: job.updatedAt.toISOString(),
+    interviews: job.interviews.map((interview) => ({
+      id: interview.id,
+      interviewDate: interview.interviewDate.toISOString(),
+      interviewType: interview.interviewType,
+    })),
   };
 }
 

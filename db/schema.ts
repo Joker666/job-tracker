@@ -1,4 +1,5 @@
 import {
+  index,
   pgEnum,
   pgTable,
   text,
@@ -32,6 +33,29 @@ export const jobApplications = pgTable("job_applications", {
     .defaultNow(),
 });
 
+export const jobInterviews = pgTable(
+  "job_interviews",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    jobApplicationId: uuid("job_application_id")
+      .notNull()
+      .references(() => jobApplications.id, { onDelete: "cascade" }),
+    interviewDate: timestamp("interview_date", { withTimezone: true }).notNull(),
+    interviewType: text("interview_type").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("job_interviews_job_application_id_idx").on(table.jobApplicationId),
+  ],
+);
+
 export type JobApplication = typeof jobApplications.$inferSelect;
 export type NewJobApplication = typeof jobApplications.$inferInsert;
+export type JobInterview = typeof jobInterviews.$inferSelect;
+export type NewJobInterview = typeof jobInterviews.$inferInsert;
 export type { ApplicationStatus };
