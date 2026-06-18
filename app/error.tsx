@@ -8,18 +8,23 @@ export default function Error({
   reset: () => void;
 }) {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 text-zinc-950">
-      <div className="max-w-md rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
-        <h1 className="text-xl font-semibold">Could not load jobs</h1>
-        <p className="mt-2 text-sm leading-6 text-zinc-600">
+    <main className="flex min-h-screen items-center justify-center bg-[#f4f3ef] px-4 text-black font-sans">
+      <div className="max-w-md border-4 border-black bg-white p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <h1 className="font-mono text-lg font-black uppercase tracking-wider">
+          :: System Error
+        </h1>
+        <p className="mt-4 font-mono text-xs font-bold uppercase tracking-wider text-black/60">
+          // could not load jobs
+        </p>
+        <p className="mt-3 text-sm font-medium leading-relaxed">
           {error.message || "Check the database connection and try again."}
         </p>
         <button
           type="button"
           onClick={reset}
-          className="mt-5 h-10 rounded-md bg-zinc-950 px-4 text-sm font-medium text-white transition hover:bg-zinc-800"
+          className="mt-6 inline-flex h-11 items-center justify-center border-2 border-black bg-[#FB7185] px-5 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
         >
-          Try again
+          Try Again
         </button>
       </div>
     </main>

@@ -57,6 +57,17 @@ type FormMode =
 
 const initialActionState: ActionState = { ok: false };
 
+const STATUS_COLORS: Record<
+  ApplicationStatus,
+  { bg: string; accentBg: string }
+> = {
+  SAVED: { bg: "bg-[#FFDE4D]", accentBg: "bg-[#FFF9C4]" },
+  APPLIED: { bg: "bg-[#38BDF8]", accentBg: "bg-[#E0F7FA]" },
+  INTERVIEWING: { bg: "bg-[#C084FC]", accentBg: "bg-[#F3E5F5]" },
+  OFFER: { bg: "bg-[#4ADE80]", accentBg: "bg-[#E8F5E9]" },
+  REJECTED: { bg: "bg-[#FB7185]", accentBg: "bg-[#FFEBEE]" },
+};
+
 function JobForm({
   mode,
   onDone,
@@ -82,122 +93,135 @@ function JobForm({
   }, [onDone, state.ok]);
 
   return (
-    <form action={formAction} className="space-y-5">
+    <form action={formAction} className="space-y-6">
       {state.error ? (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-          {state.error}
+        <div className="border-2 border-black bg-[#FB7185] p-3 font-mono text-xs font-bold text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+          <span className="uppercase">[ERROR]</span> {state.error}
         </div>
       ) : null}
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="space-y-1.5 text-sm font-medium text-zinc-700">
-          <span>Title</span>
+      <div className="grid gap-6 sm:grid-cols-2">
+        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
+          <span>Title <span className="text-red-500">*</span></span>
           <input
-            className="h-10 w-full rounded-md border border-zinc-200 bg-white px-3 text-sm outline-none transition focus:border-zinc-500"
+            className="h-11 w-full border-2 border-black bg-white px-3 font-sans text-sm font-semibold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
             name="title"
             required
             defaultValue={job?.title ?? ""}
+            placeholder="e.g. Senior Frontend Engineer"
           />
         </label>
 
-        <label className="space-y-1.5 text-sm font-medium text-zinc-700">
-          <span>Company name</span>
+        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
+          <span>Company name <span className="text-red-500">*</span></span>
           <input
-            className="h-10 w-full rounded-md border border-zinc-200 bg-white px-3 text-sm outline-none transition focus:border-zinc-500"
+            className="h-11 w-full border-2 border-black bg-white px-3 font-sans text-sm font-semibold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
             name="companyName"
             required
             defaultValue={job?.companyName ?? ""}
+            placeholder="e.g. Acme Corp"
           />
         </label>
 
-        <label className="space-y-1.5 text-sm font-medium text-zinc-700">
+        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
           <span>Location</span>
           <input
-            className="h-10 w-full rounded-md border border-zinc-200 bg-white px-3 text-sm outline-none transition focus:border-zinc-500"
+            className="h-11 w-full border-2 border-black bg-white px-3 font-sans text-sm font-semibold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
             name="location"
             defaultValue={job?.location ?? ""}
+            placeholder="e.g. New York, NY (Hybrid)"
           />
         </label>
 
-        <label className="space-y-1.5 text-sm font-medium text-zinc-700">
+        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
           <span>Salary range</span>
           <input
-            className="h-10 w-full rounded-md border border-zinc-200 bg-white px-3 text-sm outline-none transition focus:border-zinc-500"
+            className="h-11 w-full border-2 border-black bg-white px-3 font-sans text-sm font-semibold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
             name="salaryRange"
             defaultValue={job?.salaryRange ?? ""}
+            placeholder="e.g. $120k - $140k"
           />
         </label>
 
-        <label className="space-y-1.5 text-sm font-medium text-zinc-700">
-          <span>Status</span>
-          <select
-            className="h-10 w-full rounded-md border border-zinc-200 bg-white px-3 text-sm outline-none transition focus:border-zinc-500"
-            name="status"
-            required
-            defaultValue={job?.status ?? "SAVED"}
-          >
-            {APPLICATION_STATUSES.map((status) => (
-              <option key={status} value={status}>
-                {STATUS_LABELS[status]}
-              </option>
-            ))}
-          </select>
+        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
+          <span>Status <span className="text-red-500">*</span></span>
+          <div className="relative">
+            <select
+              className="h-11 w-full border-2 border-black bg-white px-3 font-mono text-xs font-bold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all appearance-none"
+              name="status"
+              required
+              defaultValue={job?.status ?? "SAVED"}
+            >
+              {APPLICATION_STATUSES.map((status) => (
+                <option key={status} value={status}>
+                  {STATUS_LABELS[status]}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-black font-black border-l-2 border-black bg-[#FFDE4D]">
+              ▼
+            </div>
+          </div>
         </label>
 
-        <label className="space-y-1.5 text-sm font-medium text-zinc-700">
+        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
           <span>Resume PDF</span>
           <input
             accept="application/pdf,.pdf"
-            className="block h-10 w-full rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-zinc-900 file:px-3 file:py-1 file:text-xs file:font-medium file:text-white"
+            className="block h-11 w-full border-2 border-black bg-white px-3 py-1.5 text-sm font-semibold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all file:mr-3 file:border-r file:border-t-0 file:border-b-0 file:border-l-0 file:border-black file:bg-[#38BDF8] file:px-3 file:py-1 file:font-mono file:text-xs file:font-black file:uppercase file:-ml-3 file:h-10 file:cursor-pointer"
             name="resume"
             type="file"
           />
         </label>
       </div>
 
-      <label className="block space-y-1.5 text-sm font-medium text-zinc-700">
+      <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
         <span>Description</span>
         <textarea
-          className="min-h-24 w-full rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-zinc-500"
+          className="min-h-24 w-full border-2 border-black bg-white px-3 py-2 font-sans text-sm font-semibold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
           name="description"
           defaultValue={job?.description ?? ""}
+          placeholder="Detailed job description..."
         />
       </label>
 
-      <label className="block space-y-1.5 text-sm font-medium text-zinc-700">
-        <span>Note</span>
+      <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
+        <span>Notes / Activity Log</span>
         <textarea
-          className="min-h-20 w-full rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-zinc-500"
+          className="min-h-20 w-full border-2 border-black bg-white px-3 py-2 font-sans text-sm font-semibold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
           name="note"
           defaultValue={job?.note ?? ""}
+          placeholder="Keep updates here..."
         />
       </label>
 
       {job?.resumeUrl ? (
-        <a
-          className="inline-flex text-sm font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-4 hover:decoration-zinc-900"
-          href={job.resumeUrl}
-          target="_blank"
-          rel="noreferrer"
-        >
-          Current resume: {job.resumeName ?? "PDF"}
-        </a>
+        <div className="flex">
+          <a
+            className="inline-flex items-center gap-2 border border-black bg-[#80DEEA] px-3 py-1.5 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all"
+            href={job.resumeUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            📄 VIEW CURRENT RESUME: {job.resumeName ?? "PDF"}
+          </a>
+        </div>
       ) : null}
 
-      <div className="flex justify-end gap-2 border-t border-zinc-100 pt-5">
+      <div className="flex justify-end gap-3 border-t-2 border-black pt-6">
         <button
           type="button"
           onClick={onDone}
-          className="h-10 rounded-md border border-zinc-200 px-4 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50"
+          className="h-11 border-2 border-black bg-white px-5 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={pending}
-          className="h-10 rounded-md bg-zinc-950 px-4 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60"
+          className="h-11 border-2 border-black bg-[#4ADE80] px-5 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
         >
-          {pending ? "Saving..." : isEdit ? "Save changes" : "Create job"}
+          {pending ? "Saving..." : isEdit ? "Save Changes" : "Create Job"}
         </button>
       </div>
     </form>
@@ -212,18 +236,18 @@ function JobModal({
   onClose: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-zinc-950/30 px-4 py-8 backdrop-blur-sm">
-      <div className="w-full max-w-3xl rounded-lg bg-white p-6 shadow-xl">
-        <div className="mb-5 flex items-center justify-between gap-4">
-          <h2 className="text-xl font-semibold text-zinc-950">
-            {mode.type === "edit" ? "Edit job application" : "New job application"}
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 px-4 py-8 backdrop-blur-[2px]">
+      <div className="w-full max-w-2xl border-4 border-black bg-[#f4f3ef] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:p-8">
+        <div className="mb-6 flex items-center justify-between gap-4 border-b-2 border-black pb-4">
+          <h2 className="font-mono text-lg font-black uppercase tracking-wider text-black">
+            {mode.type === "edit" ? ":: Edit Job Application" : ":: New Job Application"}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="h-9 rounded-md border border-zinc-200 px-3 text-sm font-medium text-zinc-600 transition hover:bg-zinc-50"
+            className="border-2 border-black bg-white px-3 py-1 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
           >
-            Close
+            CLOSE
           </button>
         </div>
         <JobForm mode={mode} onDone={onClose} />
@@ -257,82 +281,84 @@ function JobCard({
     transform: transform
       ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
       : undefined,
-    opacity: isDragging ? 0.55 : 1,
+    opacity: isDragging ? 0.3 : 1,
+    zIndex: isDragging ? 50 : undefined,
   };
 
   return (
     <article
       ref={setNodeRef}
       style={style}
-      className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm"
+      className="border-3 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all bg-[#FAF8F5] relative group"
     >
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h3 className="text-base font-semibold text-zinc-950">{job.title}</h3>
-          <p className="text-sm text-zinc-600">{job.companyName}</p>
+          <h3 className="font-mono text-sm font-black uppercase tracking-tight text-black line-clamp-1">
+            {job.title}
+          </h3>
+          <p className="font-mono text-xs font-bold text-black/70 mt-0.5">
+            {job.companyName}
+          </p>
         </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <span className="rounded-md bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-700">
-            {STATUS_LABELS[job.status]}
-          </span>
-          <button
-            ref={setActivatorNodeRef}
-            type="button"
-            className="cursor-grab rounded-md border border-zinc-200 px-2 py-1 text-xs font-medium text-zinc-500 active:cursor-grabbing"
-            aria-label={`Drag ${job.title}`}
-            {...listeners}
-            {...attributes}
-          >
-            Drag
-          </button>
-        </div>
+        <button
+          ref={setActivatorNodeRef}
+          type="button"
+          className="cursor-grab border border-black bg-white px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] active:cursor-grabbing hover:bg-yellow-50 shrink-0 select-none"
+          aria-label={`Drag ${job.title}`}
+          {...listeners}
+          {...attributes}
+        >
+          DRAG
+        </button>
       </div>
 
-      <dl className="mt-4 space-y-1.5 text-sm text-zinc-600">
+      <div className="mt-4 border-t-2 border-dashed border-black/25 pt-3 space-y-1.5">
         {job.location ? (
-          <div className="flex gap-2">
-            <dt className="font-medium text-zinc-800">Location</dt>
-            <dd>{job.location}</dd>
+          <div className="flex items-center gap-1.5 font-mono text-[11px] font-semibold text-black/75">
+            <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 border border-black bg-white shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">Loc</span>
+            <span className="truncate">{job.location}</span>
           </div>
         ) : null}
         {job.salaryRange ? (
-          <div className="flex gap-2">
-            <dt className="font-medium text-zinc-800">Salary</dt>
-            <dd>{job.salaryRange}</dd>
+          <div className="flex items-center gap-1.5 font-mono text-[11px] font-semibold text-black/75">
+            <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 border border-black bg-[#4ADE80] shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">Sal</span>
+            <span className="truncate">{job.salaryRange}</span>
           </div>
         ) : null}
-      </dl>
+      </div>
 
       {notePreview ? (
-        <p className="mt-3 line-clamp-3 text-sm leading-6 text-zinc-600">
-          {notePreview}
-        </p>
+        <div className="mt-3 border border-black bg-white p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <p className="line-clamp-2 text-xs leading-normal font-sans font-medium text-black/80">
+            {notePreview}
+          </p>
+        </div>
       ) : null}
 
-      <div className="mt-4 flex flex-wrap items-center gap-2">
+      <div className="mt-5 flex flex-wrap items-center gap-2 border-t-2 border-black/10 pt-3">
         {job.resumeUrl ? (
           <a
-            className="rounded-md border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-700 transition hover:bg-zinc-50"
+            className="inline-flex items-center justify-center border border-black bg-[#38BDF8] px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all"
             href={job.resumeUrl}
             target="_blank"
             rel="noreferrer"
           >
-            Resume PDF
+            Resume
           </a>
         ) : null}
         <button
           type="button"
           onClick={() => onEdit(job)}
-          className="rounded-md border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-700 transition hover:bg-zinc-50"
+          className="inline-flex items-center justify-center border border-black bg-white px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
         >
           Edit
         </button>
-        <form action={deleteJobApplication.bind(null, job.id)}>
+        <form action={deleteJobApplication.bind(null, job.id)} className="inline">
           <button
             type="submit"
-            className="rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-700 transition hover:bg-red-50"
+            className="inline-flex items-center justify-center border border-black bg-[#FB7185] px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
           >
-            Delete
+            Del
           </button>
         </form>
       </div>
@@ -353,30 +379,32 @@ function KanbanColumn({
     id: status,
   });
 
+  const colorConfig = STATUS_COLORS[status];
+
   return (
     <div
       ref={setNodeRef}
-      className={`min-h-48 rounded-lg border p-3 transition ${
-        isOver
-          ? "border-zinc-400 bg-zinc-200/80"
-          : "border-zinc-200 bg-zinc-100/60"
+      className={`min-h-[500px] border-3 border-black p-4 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
+        isOver ? "bg-[#FFFDEB]" : "bg-white"
       }`}
     >
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-zinc-900">
+      {/* Column Title Sticker */}
+      <div className={`mb-6 flex items-center justify-between border-2 border-black p-2.5 ${colorConfig.bg} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`}>
+        <h2 className="font-mono text-xs font-black uppercase tracking-wider text-black">
           {STATUS_LABELS[status]}
         </h2>
-        <span className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-zinc-500">
+        <span className="border border-black bg-white px-2 py-0.5 font-mono text-xs font-bold text-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
           {jobs.length}
         </span>
       </div>
-      <div className="space-y-3">
+
+      <div className="space-y-4">
         {jobs.length > 0 ? (
           jobs.map((job) => (
             <JobCard key={job.id} job={job} onEdit={onEdit} />
           ))
         ) : (
-          <div className="rounded-lg border border-dashed border-zinc-300 bg-white/60 p-4 text-center text-sm text-zinc-500">
+          <div className="border-2 border-dashed border-black/35 bg-[#FAF8F5] px-4 py-8 text-center font-mono text-xs font-bold uppercase tracking-wider text-black/40">
             Drop jobs here
           </div>
         )}
@@ -441,36 +469,39 @@ export function JobTracker({ jobs }: TrackerProps) {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-50 px-4 py-8 text-zinc-950 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-[#f4f3ef] px-4 py-10 text-black sm:px-6 lg:px-8 font-sans">
       <div className="mx-auto max-w-7xl">
-        <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <header className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between border-b-4 border-black pb-8">
           <div>
-            <h1 className="text-3xl font-semibold tracking-tight">
-              Job tracker
-            </h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-600">
-              Track each application, the exact submitted resume, and where it
-              stands in your pipeline.
+            <div className="inline-block border-4 border-black bg-[#FFDE4D] px-6 py-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -rotate-1 transform">
+              <h1 className="text-3xl font-black uppercase tracking-wider md:text-4xl text-black">
+                Job Tracker
+              </h1>
+            </div>
+            <p className="mt-6 font-mono text-xs font-bold uppercase tracking-wider text-black/70">
+              // MONITOR PIPELINES, SUBMITTED RESUMES, AND OFFERS
             </p>
           </div>
           <button
             type="button"
             onClick={() => setModal({ type: "create" })}
-            className="h-10 rounded-md bg-zinc-950 px-4 text-sm font-medium text-white transition hover:bg-zinc-800"
+            className="inline-flex h-12 items-center justify-center border-3 border-black bg-[#4ADE80] px-6 text-sm font-black uppercase tracking-wider text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
           >
-            Create job application
+            + Create Application
           </button>
         </header>
 
         {statusError ? (
-          <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-            {statusError}
+          <div className="mb-6 border-3 border-black bg-[#FB7185] p-4 font-mono text-sm font-bold text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <span className="uppercase">[ERROR]</span> {statusError}
           </div>
         ) : null}
 
         <DndContext onDragEnd={handleDragEnd}>
           <section
-            className={`grid gap-4 lg:grid-cols-5 ${isPending ? "opacity-90" : ""}`}
+            className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-5 ${
+              isPending ? "opacity-80" : ""
+            }`}
           >
             {jobsByStatus.map(({ status, jobs: statusJobs }) => (
               <KanbanColumn
@@ -490,3 +521,4 @@ export function JobTracker({ jobs }: TrackerProps) {
     </main>
   );
 }
+
