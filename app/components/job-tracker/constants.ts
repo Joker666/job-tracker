@@ -1,6 +1,7 @@
 import type { ApplicationStatus } from "@/lib/status";
 
 export const ACCESS_STORAGE_KEY = "job-tracker-access-granted";
+export const VIEW_MODE_STORAGE_KEY = "job-tracker-view-mode";
 
 export const INTERVIEW_TYPE_OPTIONS = [
   "Recruiter screen",

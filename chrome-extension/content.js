@@ -181,9 +181,7 @@ function inferCompanyFromPageTitle(pageTitle, jobTitle) {
 
   if (normalizedJobTitle && normalizedTitle.startsWith(normalizedJobTitle)) {
     return sanitize(
-      normalizedTitle
-        .slice(normalizedJobTitle.length)
-        .replace(/^(\s*[-|@]\s*|\s+at\s+)/i, ""),
+      normalizedTitle.slice(normalizedJobTitle.length).replace(/^(\s*[-|@]\s*|\s+at\s+)/i, ""),
     );
   }
 
@@ -216,7 +214,10 @@ function findLocationCandidate(jobTitle, company) {
         seen.has(text) ||
         text.length > 80 ||
         (normalizedTitle && lowerText.includes(normalizedTitle)) ||
-        (normalizedCompany && normalizedTitle && lowerText.includes(normalizedCompany) && lowerText.includes(normalizedTitle))
+        (normalizedCompany &&
+          normalizedTitle &&
+          lowerText.includes(normalizedCompany) &&
+          lowerText.includes(normalizedTitle))
       ) {
         continue;
       }

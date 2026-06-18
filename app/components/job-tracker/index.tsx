@@ -13,7 +13,7 @@ import { useEffect, useMemo, useOptimistic, useState, useTransition } from "reac
 import { updateJobApplicationStatus } from "@/app/actions";
 import { APPLICATION_STATUSES } from "@/lib/status";
 import { AccessCheckingOverlay, AccessModal } from "./access-modal";
-import { ACCESS_STORAGE_KEY } from "./constants";
+import { ACCESS_STORAGE_KEY, VIEW_MODE_STORAGE_KEY } from "./constants";
 import { JobDetailModal } from "./job-detail-modal";
 import { JobListView } from "./job-list";
 import { JobModal } from "./job-modal";
@@ -32,6 +32,11 @@ export function JobTracker({ jobs }: TrackerProps) {
   const [statusError, setStatusError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
+
+  const handleViewChange = (mode: "kanban" | "list") => {
+    setViewMode(mode);
+    localStorage.setItem(VIEW_MODE_STORAGE_KEY, mode);
+  };
 
   const [optimisticJobs, setOptimisticJobs] = useOptimistic(
     jobs,
@@ -55,6 +60,11 @@ export function JobTracker({ jobs }: TrackerProps) {
   useEffect(() => {
     setAccessGranted(localStorage.getItem(ACCESS_STORAGE_KEY) === "true");
     setAccessChecked(true);
+
+    const savedViewMode = localStorage.getItem(VIEW_MODE_STORAGE_KEY);
+    if (savedViewMode === "kanban" || savedViewMode === "list") {
+      setViewMode(savedViewMode);
+    }
   }, []);
 
   const jobsByStatus = useMemo(() => {
@@ -118,7 +128,7 @@ export function JobTracker({ jobs }: TrackerProps) {
             <div className="hidden sm:flex gap-2">
               <button
                 type="button"
-                onClick={() => setViewMode("kanban")}
+                onClick={() => handleViewChange("kanban")}
                 className={`h-12 border-3 border-black px-4 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
                   viewMode === "kanban" ? "bg-[#FFDE4D]" : "bg-white"
                 }`}
@@ -127,7 +137,7 @@ export function JobTracker({ jobs }: TrackerProps) {
               </button>
               <button
                 type="button"
-                onClick={() => setViewMode("list")}
+                onClick={() => handleViewChange("list")}
                 className={`h-12 border-3 border-black px-4 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
                   viewMode === "list" ? "bg-[#FFDE4D]" : "bg-white"
                 }`}

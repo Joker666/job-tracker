@@ -3,10 +3,7 @@
   "name": "Job Tracker Companion",
   "version": "1.0.0",
   "description": "Clip job details from LinkedIn, Ashby, Greenhouse, Lever, Rippling, BambooHR, and more, and save them straight to your Job Tracker.",
-  "permissions": [
-    "activeTab",
-    "storage"
-  ],
+  "permissions": ["activeTab", "storage"],
   "icons": {
     "16": "icons/icon-16.png",
     "48": "icons/icon-48.png",
