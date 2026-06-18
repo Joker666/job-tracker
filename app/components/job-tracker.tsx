@@ -16,6 +16,7 @@ import {
   useEffect,
   useId,
   useMemo,
+  useOptimistic,
   useState,
   useTransition,
 } from "react";
@@ -921,7 +922,13 @@ export function JobTracker({ jobs }: TrackerProps) {
   const router = useRouter();
   const [modal, setModal] = useState<FormMode | null>(null);
   const [detailJob, setDetailJob] = useState<JobApplicationView | null>(null);
-  const [localJobs, setLocalJobs] = useState(jobs);
+  const [optimisticJobs, setOptimisticJobs] = useOptimistic(
+    jobs,
+    (state, update: { jobId: string; nextStatus: ApplicationStatus }) =>
+      state.map((job) =>
+        job.id === update.jobId ? { ...job, status: update.nextStatus } : job,
+      ),
+  );
   const [accessGranted, setAccessGranted] = useState(false);
   const [accessChecked, setAccessChecked] = useState(false);
   const [nowMs, setNowMs] = useState<number | null>(null);
@@ -937,10 +944,6 @@ export function JobTracker({ jobs }: TrackerProps) {
   );
 
   useEffect(() => {
-    setLocalJobs(jobs);
-  }, [jobs]);
-
-  useEffect(() => {
     setNowMs(Date.now());
   }, []);
 
@@ -952,9 +955,9 @@ export function JobTracker({ jobs }: TrackerProps) {
   const jobsByStatus = useMemo(() => {
     return APPLICATION_STATUSES.map((status) => ({
       status,
-      jobs: localJobs.filter((job) => job.status === status),
+      jobs: optimisticJobs.filter((job) => job.status === status),
     }));
-  }, [localJobs]);
+  }, [optimisticJobs]);
 
   function handleDragEnd(event: DragEndEvent) {
     const jobId = String(event.active.id);
@@ -964,32 +967,22 @@ export function JobTracker({ jobs }: TrackerProps) {
       return;
     }
 
-    const job = localJobs.find((candidate) => candidate.id === jobId);
+    const job = jobs.find((candidate) => candidate.id === jobId);
 
     if (!job || job.status === nextStatus) {
       return;
     }
 
-    const previousJobs = localJobs;
     setStatusError(null);
-    setLocalJobs((currentJobs) =>
-      currentJobs.map((candidate) =>
-        candidate.id === jobId
-          ? { ...candidate, status: nextStatus }
-          : candidate,
-      ),
-    );
 
-    startTransition(() => {
-      void updateJobApplicationStatus(jobId, nextStatus).then((result) => {
-        if (!result.ok) {
-          setLocalJobs(previousJobs);
-          setStatusError(result.error ?? "Status update failed.");
-          return;
-        }
-
-        router.refresh();
-      });
+    startTransition(async () => {
+      setOptimisticJobs({ jobId, nextStatus });
+      const result = await updateJobApplicationStatus(jobId, nextStatus);
+      if (!result.ok) {
+        setStatusError(result.error ?? "Status update failed.");
+        return;
+      }
+      router.refresh();
     });
   }
 
