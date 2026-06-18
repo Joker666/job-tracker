@@ -12,6 +12,33 @@ type ActionResult = {
   error?: string;
 };
 
+export async function verifyAppAccess(
+  _previousState: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const expectedUsername = process.env.APP_ACCESS_USERNAME;
+  const expectedPassword = process.env.APP_ACCESS_PASSWORD;
+
+  if (!expectedUsername || !expectedPassword) {
+    return {
+      ok: false,
+      error: "Access credentials are not configured.",
+    };
+  }
+
+  const username = getString(formData, "username");
+  const password = getString(formData, "password");
+
+  if (username !== expectedUsername || password !== expectedPassword) {
+    return {
+      ok: false,
+      error: "Invalid username or password.",
+    };
+  }
+
+  return { ok: true };
+}
+
 function getString(formData: FormData, key: string) {
   const value = formData.get(key);
 
