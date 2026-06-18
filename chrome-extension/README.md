@@ -47,5 +47,10 @@ The **Job Tracker Companion** icon will now appear in your browser toolbar!
    - Autofill the **Description** using the text you highlighted.
 4. Review or edit the fields.
 5. Select an initial status (e.g., `Saved`, `Applied`).
-6. Click **Clip Application**.
-7. The popup will show a success notification, close automatically, and the new application will appear instantly on your Job Tracker dashboard!
+6. **AI Assistant Option (Chrome AI Sidebar)**:
+   - If the page layout is complex or you want to delegate parsing to an AI agent, click the **📋 Copy AI Prompt** button.
+   - This copies a structured instruction prompt containing your connection details (Host URL and API Token) and the current job posting URL.
+   - Paste this prompt into your Chrome AI Sidebar (e.g., Gemini). The AI agent will parse the page and output a ready-to-run `curl` command.
+   - Copy the generated `curl` command and paste it directly into your terminal to submit the job posting to your tracker database instantly.
+7. Click **Clip Application**.
+8. The popup will show a success notification, close automatically, and the new application will appear instantly on your Job Tracker dashboard!
