@@ -8,12 +8,8 @@ import type { JobApplicationView } from "./types";
 
 export function formatInterviewDate(value: string) {
   const date = new Date(value);
-  const hours = date.getUTCHours();
-  const minutes = String(date.getUTCMinutes()).padStart(2, "0");
-  const period = hours >= 12 ? "PM" : "AM";
-  const hour = hours % 12 || 12;
 
-  return `${MONTH_LABELS[date.getUTCMonth()]} ${date.getUTCDate()}, ${hour}:${minutes} ${period}`;
+  return `${MONTH_LABELS[date.getUTCMonth()]} ${date.getUTCDate()}, ${date.getUTCFullYear()}`;
 }
 
 export function formatResumeUploadedAt(value: string) {

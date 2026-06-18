@@ -22,7 +22,7 @@ export function createEmptyInterviewRow(key: string) {
   };
 }
 
-export function toDateTimeLocal(value: string) {
+export function toDateInputValue(value: string) {
   if (!value) {
     return "";
   }
@@ -33,7 +33,7 @@ export function toDateTimeLocal(value: string) {
     return "";
   }
 
-  return date.toISOString().slice(0, 16);
+  return date.toISOString().slice(0, 10);
 }
 
 export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }) {
@@ -213,8 +213,8 @@ export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }
                 <input
                   className="h-10 w-full border-2 border-black bg-white px-3 font-sans text-sm font-semibold text-black outline-none shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all"
                   name="interviewDate"
-                  type="datetime-local"
-                  defaultValue={toDateTimeLocal(row.interviewDate)}
+                  type="date"
+                  defaultValue={toDateInputValue(row.interviewDate)}
                 />
               </label>
               <label className="flex flex-col gap-2 font-mono text-[10px] font-black uppercase tracking-wider text-black">

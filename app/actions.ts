@@ -129,7 +129,9 @@ function readInterviews(formData: FormData) {
       throw new Error("Each interview needs both a date and a type.");
     }
 
-    const interviewDate = new Date(rawDate);
+    const interviewDate = /^\d{4}-\d{2}-\d{2}$/.test(rawDate)
+      ? new Date(`${rawDate}T00:00:00.000Z`)
+      : new Date(rawDate);
 
     if (Number.isNaN(interviewDate.getTime())) {
       throw new Error("Interview date is invalid.");
