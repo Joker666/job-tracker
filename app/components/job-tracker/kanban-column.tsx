@@ -48,7 +48,7 @@ export function KanbanColumn({
             <JobCard key={job.id} job={job} onViewDetails={onViewDetails} nowMs={nowMs} />
           ))
         ) : (
-          <div className="border-2 border-dashed border-black/35 bg-[#FAF8F5] px-4 py-8 text-center font-mono text-xs font-bold uppercase tracking-wider text-black/40">
+          <div className="w-full border-2 border-dashed border-black/35 bg-[#FAF8F5] px-4 py-8 text-center font-mono text-xs font-bold uppercase tracking-wider text-black/40">
             Drop jobs here
           </div>
         )}
