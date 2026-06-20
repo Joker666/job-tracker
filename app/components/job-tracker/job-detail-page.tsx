@@ -45,6 +45,7 @@ export function JobDetailPageContent({ job }: { job: JobApplicationView }) {
 
     try {
       await deleteJobApplication(job.id);
+      sessionStorage.setItem("pending_toast", "Successfully deleted application!");
       router.push("/");
     } catch (err) {
       console.error(err);

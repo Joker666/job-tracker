@@ -53,9 +53,13 @@ export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }
 
   useEffect(() => {
     if (state.ok) {
+      sessionStorage.setItem(
+        "pending_toast",
+        isEdit ? "Successfully updated application!" : "Successfully created application!",
+      );
       onDone();
     }
-  }, [onDone, state.ok]);
+  }, [onDone, state.ok, isEdit]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragCounter = useRef(0);

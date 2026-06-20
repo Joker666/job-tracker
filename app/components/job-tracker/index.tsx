@@ -32,6 +32,10 @@ export function JobTracker({ jobs }: TrackerProps) {
   const [statusError, setStatusError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error" | "info";
+  } | null>(null);
 
   const handleViewChange = (mode: "kanban" | "list") => {
     setViewMode(mode);
@@ -67,6 +71,24 @@ export function JobTracker({ jobs }: TrackerProps) {
     }
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: run when modal or detail closes to consume toast
+  useEffect(() => {
+    const pendingToast = sessionStorage.getItem("pending_toast");
+    if (pendingToast) {
+      setToast({ message: pendingToast, type: "success" });
+      sessionStorage.removeItem("pending_toast");
+    }
+  }, [modal, detailJob]);
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
   const jobsByStatus = useMemo(() => {
     return APPLICATION_STATUSES.map((status) => ({
       status,
@@ -95,8 +117,13 @@ export function JobTracker({ jobs }: TrackerProps) {
       const result = await updateJobApplicationStatus(jobId, nextStatus);
       if (!result.ok) {
         setStatusError(result.error ?? "Status update failed.");
+        setToast({ message: result.error ?? "Status update failed.", type: "error" });
         return;
       }
+      setToast({
+        message: `Moved "${job.companyName}" to ${nextStatus.toLowerCase()}`,
+        type: "success",
+      });
       router.refresh();
     });
   }
@@ -214,6 +241,28 @@ export function JobTracker({ jobs }: TrackerProps) {
           }}
           nowMs={nowMs}
         />
+      ) : null}
+
+      {toast ? (
+        <div
+          className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 border-4 border-border-custom px-4 py-3 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[4px_4px_0px_0px_var(--shadow-color)] animate-slide-in ${
+            toast.type === "error"
+              ? "bg-[#FB7185]"
+              : toast.type === "info"
+                ? "bg-[#38BDF8]"
+                : "bg-[#4ADE80]"
+          }`}
+        >
+          <span>{toast.message}</span>
+          <button
+            type="button"
+            onClick={() => setToast(null)}
+            className="ml-2 font-black hover:opacity-75 transition-opacity"
+            aria-label="Close notification"
+          >
+            ✕
+          </button>
+        </div>
       ) : null}
     </main>
   );

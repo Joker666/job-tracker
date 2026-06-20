@@ -62,6 +62,7 @@ export function JobDetailModal({
 
     try {
       await deleteJobApplication(job.id);
+      sessionStorage.setItem("pending_toast", "Successfully deleted application!");
       onClose();
     } catch (err) {
       console.error(err);
