@@ -80,12 +80,8 @@
           "name": "job_application_status_events_job_application_id_job_applications_id_fk",
           "tableFrom": "job_application_status_events",
           "tableTo": "job_applications",
-          "columnsFrom": [
-            "job_application_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["job_application_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -268,12 +264,8 @@
           "name": "job_interviews_job_application_id_job_applications_id_fk",
           "tableFrom": "job_interviews",
           "tableTo": "job_applications",
-          "columnsFrom": [
-            "job_application_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["job_application_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -289,13 +281,7 @@
     "public.application_status": {
       "name": "application_status",
       "schema": "public",
-      "values": [
-        "SAVED",
-        "APPLIED",
-        "INTERVIEWING",
-        "OFFER",
-        "REJECTED"
-      ]
+      "values": ["SAVED", "APPLIED", "INTERVIEWING", "OFFER", "REJECTED"]
     }
   },
   "schemas": {},

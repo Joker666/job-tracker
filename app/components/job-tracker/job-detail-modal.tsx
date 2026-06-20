@@ -72,25 +72,27 @@ export function JobDetailModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain bg-black/60 sm:px-4 sm:py-8 backdrop-blur-[2px]">
-      <div className="w-full min-h-screen sm:min-h-0 sm:max-w-2xl border-0 sm:border-4 border-black bg-[#f4f3ef] p-6 shadow-none sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:p-8 relative">
+      <div className="w-full min-h-screen sm:min-h-0 sm:max-w-2xl border-0 sm:border-4 border-border-custom bg-background p-6 shadow-none sm:shadow-[8px_8px_0px_0px_var(--shadow-color)] md:p-8 relative">
         {/* Header */}
-        <div className="mb-6 flex flex-col gap-4 border-b-2 border-black pb-5">
+        <div className="mb-6 flex flex-col gap-4 border-b-2 border-border-custom pb-5">
           <div className="flex items-start justify-between gap-4">
             <div>
               <div
-                className={`inline-block border-2 border-black ${colorConfig.bg} px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] mb-3`}
+                className={`inline-block border-2 border-border-custom ${colorConfig.bg} px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_var(--shadow-color)] mb-3`}
               >
                 {STATUS_LABELS[job.status]}
               </div>
-              <h2 className="font-mono text-xl font-black uppercase tracking-tight text-black md:text-2xl">
+              <h2 className="font-mono text-xl font-black uppercase tracking-tight text-foreground md:text-2xl">
                 {job.title}
               </h2>
-              <p className="font-mono text-sm font-bold text-black/70 mt-1">{job.companyName}</p>
+              <p className="font-mono text-sm font-bold text-foreground/70 mt-1">
+                {job.companyName}
+              </p>
             </div>
             <div className="flex gap-2 shrink-0">
               <Link
                 href={`/jobs/${job.id}`}
-                className="inline-flex items-center justify-center border-2 border-black bg-white p-2 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+                className="inline-flex items-center justify-center border-2 border-border-custom bg-card p-2 font-mono text-xs font-black uppercase tracking-wider text-foreground shadow-[2px_2px_0px_0px_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_var(--shadow-color)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_var(--shadow-color)] transition-all cursor-pointer"
                 title="Open in dedicated page"
               >
                 <svg
@@ -112,7 +114,7 @@ export function JobDetailModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="border-2 border-black bg-white px-3 py-1 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+                className="border-2 border-border-custom bg-card px-3 py-1 font-mono text-xs font-black uppercase tracking-wider text-foreground shadow-[2px_2px_0px_0px_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_var(--shadow-color)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_var(--shadow-color)] transition-all cursor-pointer"
               >
                 CLOSE
               </button>
@@ -122,16 +124,16 @@ export function JobDetailModal({
           {/* Quick Meta */}
           <div className="flex flex-wrap gap-2.5">
             {job.location ? (
-              <div className="flex items-center gap-1.5 font-mono text-xs font-semibold text-black/75">
-                <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 border border-black bg-white shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+              <div className="flex items-center gap-1.5 font-mono text-xs font-semibold text-foreground/75">
+                <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 border border-border-custom bg-label shadow-[1px_1px_0px_0px_var(--shadow-color)]">
                   Loc
                 </span>
                 <span>{job.location}</span>
               </div>
             ) : null}
             {job.salaryRange ? (
-              <div className="flex items-center gap-1.5 font-mono text-xs font-semibold text-black/75">
-                <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 border border-black bg-[#4ADE80] shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+              <div className="flex items-center gap-1.5 font-mono text-xs font-semibold text-foreground/75">
+                <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 border border-border-custom bg-[#4ADE80] text-black shadow-[1px_1px_0px_0px_var(--shadow-color)]">
                   Sal
                 </span>
                 <span>{job.salaryRange}</span>
@@ -143,9 +145,9 @@ export function JobDetailModal({
                 target="_blank"
                 rel="noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1.5 font-mono text-xs font-semibold text-black hover:underline"
+                className="flex items-center gap-1.5 font-mono text-xs font-semibold text-foreground hover:underline"
               >
-                <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 border border-black bg-[#FFDE4D] shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+                <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 border border-border-custom bg-[#FFDE4D] text-black shadow-[1px_1px_0px_0px_var(--shadow-color)]">
                   Post
                 </span>
                 <span className="truncate max-w-[200px]">{job.jobUrl}</span>
@@ -157,13 +159,13 @@ export function JobDetailModal({
         {/* Content sections */}
         <div className="space-y-6">
           {/* Description */}
-          <div className="border-2 border-black bg-white p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-            <h4 className="font-mono text-xs font-black uppercase tracking-wider text-black mb-2.5">
+          <div className="border-2 border-border-custom bg-card p-4 shadow-[2px_2px_0px_0px_var(--shadow-color)]">
+            <h4 className="font-mono text-xs font-black uppercase tracking-wider text-foreground mb-2.5">
               // Job Description
             </h4>
-            <div className="text-sm font-medium leading-relaxed max-h-44 overflow-y-auto pr-2 whitespace-pre-wrap text-black/90">
+            <div className="text-sm font-medium leading-relaxed max-h-44 overflow-y-auto pr-2 whitespace-pre-wrap text-foreground/90">
               {job.description || (
-                <span className="font-mono text-xs font-bold text-black/40 uppercase">
+                <span className="font-mono text-xs font-bold text-foreground/40 uppercase">
                   No description provided.
                 </span>
               )}
@@ -171,13 +173,13 @@ export function JobDetailModal({
           </div>
 
           {/* Note */}
-          <div className="border-2 border-black bg-white p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-            <h4 className="font-mono text-xs font-black uppercase tracking-wider text-black mb-2.5">
+          <div className="border-2 border-border-custom bg-card p-4 shadow-[2px_2px_0px_0px_var(--shadow-color)]">
+            <h4 className="font-mono text-xs font-black uppercase tracking-wider text-foreground mb-2.5">
               // Personal Notes
             </h4>
-            <div className="text-sm font-medium leading-relaxed max-h-32 overflow-y-auto pr-2 whitespace-pre-wrap text-black/90">
+            <div className="text-sm font-medium leading-relaxed max-h-32 overflow-y-auto pr-2 whitespace-pre-wrap text-foreground/90">
               {job.note || (
-                <span className="font-mono text-xs font-bold text-black/40 uppercase">
+                <span className="font-mono text-xs font-bold text-foreground/40 uppercase">
                   No notes added.
                 </span>
               )}
@@ -186,9 +188,9 @@ export function JobDetailModal({
 
           <div className="grid gap-6 md:grid-cols-2">
             {/* Interviews */}
-            <div className="border-2 border-black bg-[#FFFDEB] p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex flex-col justify-between">
+            <div className="border-2 border-border-custom bg-interview p-4 shadow-[2px_2px_0px_0px_var(--shadow-color)] flex flex-col justify-between">
               <div>
-                <h4 className="font-mono text-xs font-black uppercase tracking-wider text-black mb-3">
+                <h4 className="font-mono text-xs font-black uppercase tracking-wider text-foreground mb-3">
                   // Interview Timeline
                 </h4>
                 {sortedInterviews.length > 0 ? (
@@ -199,16 +201,16 @@ export function JobDetailModal({
                       return (
                         <div
                           key={interview.id}
-                          className={`flex items-start gap-3 border border-black bg-white p-2.5 shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] ${isUpcoming ? "border-l-4 border-l-[#C084FC]" : ""}`}
+                          className={`flex items-start gap-3 border border-border-custom bg-card p-2.5 shadow-[1.5px_1.5px_0px_0px_var(--shadow-color)] ${isUpcoming ? "border-l-4 border-l-[#C084FC]" : ""}`}
                         >
-                          <span className="border border-black bg-zinc-100 px-1.5 py-0.5 font-mono text-[8px] font-black text-black">
+                          <span className="border border-border-custom bg-label px-1.5 py-0.5 font-mono text-[8px] font-black text-foreground">
                             #{index + 1}
                           </span>
                           <div>
-                            <p className="font-mono text-xs font-black uppercase text-black">
+                            <p className="font-mono text-xs font-black uppercase text-foreground">
                               {interview.interviewType}
                             </p>
-                            <p className="font-mono text-[9px] font-bold text-black/60 mt-0.5">
+                            <p className="font-mono text-[9px] font-bold text-foreground/60 mt-0.5">
                               {formatInterviewDate(interview.interviewDate)}
                             </p>
                           </div>
@@ -217,7 +219,7 @@ export function JobDetailModal({
                     })}
                   </div>
                 ) : (
-                  <p className="font-mono text-[10px] font-bold text-black/40 uppercase">
+                  <p className="font-mono text-[10px] font-bold text-foreground/40 uppercase">
                     // No interviews scheduled yet.
                   </p>
                 )}
@@ -225,24 +227,24 @@ export function JobDetailModal({
             </div>
 
             {/* Resume */}
-            <div className="border-2 border-black bg-[#E0F7FA] p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex flex-col justify-between gap-4">
+            <div className="border-2 border-border-custom bg-[#E0F7FA] dark:bg-[#1a3a3d] p-4 shadow-[2px_2px_0px_0px_var(--shadow-color)] flex flex-col justify-between gap-4">
               <div>
-                <h4 className="font-mono text-xs font-black uppercase tracking-wider text-black mb-3">
+                <h4 className="font-mono text-xs font-black uppercase tracking-wider text-black dark:text-white mb-3">
                   // Resume Submitted
                 </h4>
                 {job.resumeUrl ? (
                   <div className="space-y-2">
-                    <p className="font-mono text-xs font-bold truncate text-black/80">
+                    <p className="font-mono text-xs font-bold truncate text-black/80 dark:text-white/80">
                       {job.resumeName}
                     </p>
                     {job.resumeUploadedAt ? (
-                      <p className="font-mono text-[9px] text-black/55 uppercase font-bold">
+                      <p className="font-mono text-[9px] text-black/55 dark:text-white/55 uppercase font-bold">
                         Uploaded: {formatResumeUploadedAt(job.resumeUploadedAt)}
                       </p>
                     ) : null}
                   </div>
                 ) : (
-                  <p className="font-mono text-[10px] font-bold text-black/40 uppercase">
+                  <p className="font-mono text-[10px] font-bold text-black/40 dark:text-white/40 uppercase">
                     // No resume uploaded.
                   </p>
                 )}
@@ -254,7 +256,7 @@ export function JobDetailModal({
                     href={job.resumeUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center justify-center border border-black bg-white px-3 py-1.5 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer w-full text-center"
+                    className="inline-flex items-center justify-center border border-border-custom bg-card px-3 py-1.5 font-mono text-[10px] font-black uppercase tracking-wider text-foreground shadow-[2px_2px_0px_0px_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_var(--shadow-color)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_var(--shadow-color)] transition-all cursor-pointer w-full text-center"
                   >
                     Download Resume
                   </a>
@@ -267,14 +269,14 @@ export function JobDetailModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="mt-8 flex justify-between items-center border-t-2 border-black pt-5">
+        <div className="mt-8 flex justify-between items-center border-t-2 border-border-custom pt-5">
           <button
             type="button"
             onClick={() => {
               setDeleteError(null);
               setIsDeleteConfirmOpen(true);
             }}
-            className="h-10 border-2 border-black bg-[#FB7185] px-4 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+            className="h-10 border-2 border-border-custom bg-[#FB7185] px-4 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_var(--shadow-color)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_var(--shadow-color)] transition-all cursor-pointer"
           >
             Delete Job
           </button>
@@ -282,14 +284,14 @@ export function JobDetailModal({
             <button
               type="button"
               onClick={onClose}
-              className="h-10 border-2 border-black bg-white px-5 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+              className="h-10 border-2 border-border-custom bg-card px-5 font-mono text-xs font-black uppercase tracking-wider text-foreground shadow-[2px_2px_0px_0px_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_var(--shadow-color)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_var(--shadow-color)] transition-all cursor-pointer"
             >
               Close
             </button>
             <button
               type="button"
               onClick={onEdit}
-              className="h-10 border-2 border-black bg-[#4ADE80] px-5 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+              className="h-10 border-2 border-border-custom bg-[#4ADE80] px-5 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_var(--shadow-color)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_var(--shadow-color)] transition-all cursor-pointer"
             >
               Edit Details
             </button>

@@ -102,7 +102,7 @@ export function JobTracker({ jobs }: TrackerProps) {
   }
 
   return (
-    <main className="min-h-screen bg-[#f4f3ef] px-4 py-10 text-black sm:px-6 lg:px-8 font-sans">
+    <main className="min-h-screen bg-background px-4 py-10 text-foreground sm:px-6 lg:px-8 font-sans">
       {!accessChecked ? <AccessCheckingOverlay /> : null}
       {accessChecked && !accessGranted ? (
         <AccessModal onGranted={() => setAccessGranted(true)} />
@@ -113,14 +113,14 @@ export function JobTracker({ jobs }: TrackerProps) {
         }`}
         aria-hidden={!accessGranted}
       >
-        <header className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between border-b-4 border-black pb-8">
+        <header className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between border-b-4 border-border-custom pb-8">
           <div>
-            <div className="inline-block border-4 border-black bg-[#FFDE4D] px-6 py-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -rotate-1 transform">
+            <div className="inline-block border-4 border-border-custom bg-[#FFDE4D] px-6 py-2 shadow-[4px_4px_0px_0px_var(--shadow-color)] -rotate-1 transform">
               <h1 className="text-3xl font-black uppercase tracking-wider md:text-4xl text-black">
                 Job Tracker
               </h1>
             </div>
-            <p className="mt-6 font-mono text-xs font-bold uppercase tracking-wider text-black/70">
+            <p className="mt-6 font-mono text-xs font-bold uppercase tracking-wider text-foreground/70">
               // MONITOR PIPELINES, SUBMITTED RESUMES, AND OFFERS
             </p>
           </div>
@@ -129,8 +129,8 @@ export function JobTracker({ jobs }: TrackerProps) {
               <button
                 type="button"
                 onClick={() => handleViewChange("kanban")}
-                className={`h-12 border-3 border-black px-4 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
-                  viewMode === "kanban" ? "bg-[#FFDE4D]" : "bg-white"
+                className={`h-12 border-3 border-border-custom px-4 font-mono text-xs font-black uppercase tracking-wider shadow-[3px_3px_0px_0px_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_var(--shadow-color)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_var(--shadow-color)] transition-all cursor-pointer ${
+                  viewMode === "kanban" ? "bg-[#FFDE4D] text-black" : "bg-card text-foreground"
                 }`}
               >
                 Kanban
@@ -138,8 +138,8 @@ export function JobTracker({ jobs }: TrackerProps) {
               <button
                 type="button"
                 onClick={() => handleViewChange("list")}
-                className={`h-12 border-3 border-black px-4 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer ${
-                  viewMode === "list" ? "bg-[#FFDE4D]" : "bg-white"
+                className={`h-12 border-3 border-border-custom px-4 font-mono text-xs font-black uppercase tracking-wider shadow-[3px_3px_0px_0px_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_var(--shadow-color)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_var(--shadow-color)] transition-all cursor-pointer ${
+                  viewMode === "list" ? "bg-[#FFDE4D] text-black" : "bg-card text-foreground"
                 }`}
               >
                 List View
@@ -148,7 +148,7 @@ export function JobTracker({ jobs }: TrackerProps) {
             <button
               type="button"
               onClick={() => setModal({ type: "create" })}
-              className="inline-flex h-12 items-center justify-center border-3 border-black bg-[#4ADE80] px-6 text-sm font-black uppercase tracking-wider text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+              className="inline-flex h-12 items-center justify-center border-3 border-border-custom bg-[#4ADE80] px-6 text-sm font-black uppercase tracking-wider text-black shadow-[4px_4px_0px_0px_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_var(--shadow-color)] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0px_0px_var(--shadow-color)] transition-all cursor-pointer"
             >
               + Create Application
             </button>
@@ -156,7 +156,7 @@ export function JobTracker({ jobs }: TrackerProps) {
         </header>
 
         {statusError ? (
-          <div className="mb-6 border-3 border-black bg-[#FB7185] p-4 font-mono text-sm font-bold text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <div className="mb-6 border-3 border-border-custom bg-[#FB7185] p-4 font-mono text-sm font-bold text-black shadow-[4px_4px_0px_0px_var(--shadow-color)]">
             <span className="uppercase">[ERROR]</span> {statusError}
           </div>
         ) : null}

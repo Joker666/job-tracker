@@ -60,18 +60,18 @@ export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }
   return (
     <form action={formAction} className="space-y-6">
       {state.error ? (
-        <div className="border-2 border-black bg-[#FB7185] p-3 font-mono text-xs font-bold text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+        <div className="border-2 border-border-custom bg-[#FB7185] p-3 font-mono text-xs font-bold text-black shadow-[3px_3px_0px_0px_var(--shadow-color)]">
           <span className="uppercase">[ERROR]</span> {state.error}
         </div>
       ) : null}
 
       <div className="grid gap-6 sm:grid-cols-2">
-        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
+        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-foreground">
           <span>
             Title <span className="text-red-500">*</span>
           </span>
           <input
-            className="h-11 w-full border-2 border-black bg-white px-3 font-sans text-sm font-semibold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+            className="h-11 w-full border-2 border-border-custom bg-card px-3 font-sans text-sm font-semibold text-foreground outline-none shadow-[2px_2px_0px_0px_var(--shadow-color)] focus:bg-interview/25 focus:shadow-[4px_4px_0px_0px_var(--shadow-color)] transition-all"
             name="title"
             required
             defaultValue={job?.title ?? ""}
@@ -79,12 +79,12 @@ export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }
           />
         </label>
 
-        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
+        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-foreground">
           <span>
             Company name <span className="text-red-500">*</span>
           </span>
           <input
-            className="h-11 w-full border-2 border-black bg-white px-3 font-sans text-sm font-semibold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+            className="h-11 w-full border-2 border-border-custom bg-card px-3 font-sans text-sm font-semibold text-foreground outline-none shadow-[2px_2px_0px_0px_var(--shadow-color)] focus:bg-interview/25 focus:shadow-[4px_4px_0px_0px_var(--shadow-color)] transition-all"
             name="companyName"
             required
             defaultValue={job?.companyName ?? ""}
@@ -92,30 +92,30 @@ export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }
           />
         </label>
 
-        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
+        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-foreground">
           <span>Location</span>
           <input
-            className="h-11 w-full border-2 border-black bg-white px-3 font-sans text-sm font-semibold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+            className="h-11 w-full border-2 border-border-custom bg-card px-3 font-sans text-sm font-semibold text-foreground outline-none shadow-[2px_2px_0px_0px_var(--shadow-color)] focus:bg-interview/25 focus:shadow-[4px_4px_0px_0px_var(--shadow-color)] transition-all"
             name="location"
             defaultValue={job?.location ?? ""}
             placeholder="e.g. New York, NY (Hybrid)"
           />
         </label>
 
-        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
+        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-foreground">
           <span>Salary range</span>
           <input
-            className="h-11 w-full border-2 border-black bg-white px-3 font-sans text-sm font-semibold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+            className="h-11 w-full border-2 border-border-custom bg-card px-3 font-sans text-sm font-semibold text-foreground outline-none shadow-[2px_2px_0px_0px_var(--shadow-color)] focus:bg-interview/25 focus:shadow-[4px_4px_0px_0px_var(--shadow-color)] transition-all"
             name="salaryRange"
             defaultValue={job?.salaryRange ?? ""}
             placeholder="e.g. $120k - $140k"
           />
         </label>
 
-        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
+        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-foreground">
           <span>Job URL</span>
           <input
-            className="h-11 w-full border-2 border-black bg-white px-3 font-sans text-sm font-semibold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+            className="h-11 w-full border-2 border-border-custom bg-card px-3 font-sans text-sm font-semibold text-foreground outline-none shadow-[2px_2px_0px_0px_var(--shadow-color)] focus:bg-interview/25 focus:shadow-[4px_4px_0px_0px_var(--shadow-color)] transition-all"
             name="jobUrl"
             type="url"
             defaultValue={job?.jobUrl ?? ""}
@@ -123,67 +123,67 @@ export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }
           />
         </label>
 
-        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
+        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-foreground">
           <span>
             Status <span className="text-red-500">*</span>
           </span>
-          <div className="relative h-11 border-2 border-black bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all focus-within:bg-yellow-50 focus-within:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <div className="relative h-11 border-2 border-border-custom bg-card shadow-[2px_2px_0px_0px_var(--shadow-color)] transition-all focus-within:bg-interview/25 focus-within:shadow-[4px_4px_0px_0px_var(--shadow-color)]">
             <select
-              className="h-full w-full appearance-none bg-transparent px-3 pr-12 font-mono text-xs font-bold text-black outline-none"
+              className="h-full w-full appearance-none bg-transparent px-3 pr-12 font-mono text-xs font-bold text-foreground outline-none"
               name="status"
               required
               defaultValue={job?.status ?? "SAVED"}
             >
               {APPLICATION_STATUSES.map((status) => (
-                <option key={status} value={status}>
+                <option key={status} value={status} className="bg-card text-foreground">
                   {STATUS_LABELS[status]}
                 </option>
               ))}
             </select>
-            <div className="pointer-events-none absolute right-0 top-0 flex h-full w-11 items-center justify-center border-l-2 border-black bg-[#FFDE4D] text-black font-black">
+            <div className="pointer-events-none absolute right-0 top-0 flex h-full w-11 items-center justify-center border-l-2 border-border-custom bg-[#FFDE4D] text-black font-black">
               ▼
             </div>
           </div>
         </label>
 
-        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
+        <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-foreground">
           <span>Resume PDF</span>
           <input
             accept="application/pdf,.pdf"
-            className="block w-full border-2 border-black bg-white text-xs font-semibold text-black/60 outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all file:mr-4 file:border-0 file:border-r-2 file:border-black file:bg-[#38BDF8] file:px-4 file:py-3 file:font-mono file:text-xs file:font-black file:uppercase file:text-black hover:file:bg-[#7dd3fc] cursor-pointer"
+            className="block w-full border-2 border-border-custom bg-card text-xs font-semibold text-foreground/60 outline-none shadow-[2px_2px_0px_0px_var(--shadow-color)] focus:bg-interview/25 focus:shadow-[4px_4px_0px_0px_var(--shadow-color)] transition-all file:mr-4 file:border-0 file:border-r-2 file:border-border-custom file:bg-[#38BDF8] file:px-4 file:py-3 file:font-mono file:text-xs file:font-black file:uppercase file:text-black hover:file:bg-[#7dd3fc] cursor-pointer"
             name="resume"
             type="file"
           />
         </label>
       </div>
 
-      <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
+      <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-foreground">
         <span>Description</span>
         <textarea
-          className="min-h-24 w-full border-2 border-black bg-white px-3 py-2 font-sans text-sm font-semibold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+          className="min-h-24 w-full border-2 border-border-custom bg-card px-3 py-2 font-sans text-sm font-semibold text-foreground outline-none shadow-[2px_2px_0px_0px_var(--shadow-color)] focus:bg-interview/25 focus:shadow-[4px_4px_0px_0px_var(--shadow-color)] transition-all"
           name="description"
           defaultValue={job?.description ?? ""}
           placeholder="Detailed job description..."
         />
       </label>
 
-      <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-black">
+      <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-foreground">
         <span>Notes / Activity Log</span>
         <textarea
-          className="min-h-20 w-full border-2 border-black bg-white px-3 py-2 font-sans text-sm font-semibold text-black outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+          className="min-h-20 w-full border-2 border-border-custom bg-card px-3 py-2 font-sans text-sm font-semibold text-foreground outline-none shadow-[2px_2px_0px_0px_var(--shadow-color)] focus:bg-interview/25 focus:shadow-[4px_4px_0px_0px_var(--shadow-color)] transition-all"
           name="note"
           defaultValue={job?.note ?? ""}
           placeholder="Keep updates here..."
         />
       </label>
 
-      <section className="border-2 border-black bg-[#FFFDEB] p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+      <section className="border-2 border-border-custom bg-interview p-4 shadow-[3px_3px_0px_0px_var(--shadow-color)]">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h3 className="font-mono text-sm font-black uppercase tracking-wider text-black">
+            <h3 className="font-mono text-sm font-black uppercase tracking-wider text-foreground">
               Interview Tracking
             </h3>
-            <p className="mt-1 font-mono text-[10px] font-bold uppercase tracking-wider text-black/55">
+            <p className="mt-1 font-mono text-[10px] font-bold uppercase tracking-wider text-foreground/55">
               Add every scheduled round, not just the next one.
             </p>
           </div>
@@ -196,7 +196,7 @@ export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }
               ]);
               setNextInterviewRowIndex((currentIndex) => currentIndex + 1);
             }}
-            className="inline-flex h-9 items-center justify-center border-2 border-black bg-[#38BDF8] px-3 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+            className="inline-flex h-9 items-center justify-center border-2 border-border-custom bg-[#38BDF8] px-3 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_var(--shadow-color)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_var(--shadow-color)] transition-all cursor-pointer"
           >
             + Add Round
           </button>
@@ -206,32 +206,36 @@ export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }
           {interviewRows.map((row, index) => (
             <div
               key={row.key}
-              className="grid gap-3 border-2 border-black bg-white p-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:grid-cols-[1fr_1fr_auto]"
+              className="grid gap-3 border-2 border-border-custom bg-card p-3 shadow-[2px_2px_0px_0px_var(--shadow-color)] sm:grid-cols-[1fr_1fr_auto]"
             >
-              <label className="flex flex-col gap-2 font-mono text-[10px] font-black uppercase tracking-wider text-black">
+              <label className="flex flex-col gap-2 font-mono text-[10px] font-black uppercase tracking-wider text-foreground">
                 <span>Interview Date</span>
                 <input
-                  className="h-10 w-full border-2 border-black bg-white px-3 font-sans text-sm font-semibold text-black outline-none shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all"
+                  className="h-10 w-full border-2 border-border-custom bg-card px-3 font-sans text-sm font-semibold text-foreground outline-none shadow-[1.5px_1.5px_0px_0px_var(--shadow-color)] focus:bg-interview/25 focus:shadow-[3px_3px_0px_0px_var(--shadow-color)] transition-all"
                   name="interviewDate"
                   type="date"
                   defaultValue={toDateInputValue(row.interviewDate)}
                 />
               </label>
-              <label className="flex flex-col gap-2 font-mono text-[10px] font-black uppercase tracking-wider text-black">
+              <label className="flex flex-col gap-2 font-mono text-[10px] font-black uppercase tracking-wider text-foreground">
                 <span>Interview Type</span>
                 <select
-                  className="h-10 w-full border-2 border-black bg-white px-3 font-mono text-xs font-black uppercase tracking-wider text-black outline-none shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] focus:bg-yellow-50 focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all"
+                  className="h-10 w-full border-2 border-border-custom bg-card px-3 font-mono text-xs font-black uppercase tracking-wider text-foreground outline-none shadow-[1.5px_1.5px_0px_0px_var(--shadow-color)] focus:bg-interview/25 focus:shadow-[3px_3px_0px_0px_var(--shadow-color)] transition-all"
                   name="interviewType"
                   defaultValue={row.interviewType}
                 >
-                  <option value="">Select type</option>
+                  <option value="" className="bg-card text-foreground">
+                    Select type
+                  </option>
                   {INTERVIEW_TYPE_OPTIONS.map((option) => (
-                    <option key={option} value={option}>
+                    <option key={option} value={option} className="bg-card text-foreground">
                       {option}
                     </option>
                   ))}
                   {row.interviewType && !INTERVIEW_TYPE_OPTIONS.includes(row.interviewType) ? (
-                    <option value={row.interviewType}>{row.interviewType}</option>
+                    <option value={row.interviewType} className="bg-card text-foreground">
+                      {row.interviewType}
+                    </option>
                   ) : null}
                 </select>
               </label>
@@ -245,7 +249,7 @@ export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }
                         : currentRows.filter((candidate) => candidate.key !== row.key),
                     )
                   }
-                  className="h-10 w-full border-2 border-black bg-[#FB7185] px-3 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+                  className="h-10 w-full border-2 border-border-custom bg-[#FB7185] px-3 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_var(--shadow-color)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_var(--shadow-color)] transition-all cursor-pointer"
                   aria-label={`Remove interview row ${index + 1}`}
                 >
                   Remove
@@ -259,7 +263,7 @@ export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }
       {job?.resumeUrl ? (
         <div className="flex">
           <a
-            className="inline-flex items-center gap-2 border border-black bg-[#80DEEA] px-3 py-1.5 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all"
+            className="inline-flex items-center gap-2 border border-border-custom bg-[#80DEEA] px-3 py-1.5 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_var(--shadow-color)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_var(--shadow-color)] transition-all"
             href={job.resumeUrl}
             target="_blank"
             rel="noreferrer"
@@ -269,18 +273,18 @@ export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }
         </div>
       ) : null}
 
-      <div className="flex justify-end gap-3 border-t-2 border-black pt-6">
+      <div className="flex justify-end gap-3 border-t-2 border-border-custom pt-6">
         <button
           type="button"
           onClick={onDone}
-          className="h-11 border-2 border-black bg-white px-5 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+          className="h-11 border-2 border-border-custom bg-card px-5 font-mono text-xs font-black uppercase tracking-wider text-foreground shadow-[3px_3px_0px_0px_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_var(--shadow-color)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_var(--shadow-color)] transition-all cursor-pointer"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={pending}
-          className="h-11 border-2 border-black bg-[#4ADE80] px-5 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+          className="h-11 border-2 border-border-custom bg-[#4ADE80] px-5 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[3px_3px_0px_0px_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_var(--shadow-color)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_var(--shadow-color)] transition-all disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
         >
           {pending ? "Saving..." : isEdit ? "Save Changes" : "Create Job"}
         </button>
