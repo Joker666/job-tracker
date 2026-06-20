@@ -1,22 +1,8 @@
 "use client";
 
 import { STATUS_LABELS } from "@/lib/status";
+import { formatFriendlyDateTime } from "./date-format";
 import type { JobApplicationView } from "./types";
-
-const friendlyDateTimeFormatter = new Intl.DateTimeFormat(undefined, {
-  dateStyle: "medium",
-  timeStyle: "short",
-});
-
-function formatStatusChangedAt(value: string) {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return "Unknown time";
-  }
-
-  return friendlyDateTimeFormatter.format(date);
-}
 
 export function StatusTimeline({ job }: { job: JobApplicationView }) {
   const events =
@@ -47,7 +33,7 @@ export function StatusTimeline({ job }: { job: JobApplicationView }) {
               {STATUS_LABELS[event.toStatus]}
             </p>
             <p className="mt-1 font-mono text-[9px] font-bold uppercase text-black/55">
-              {formatStatusChangedAt(event.changedAt)}
+              {formatFriendlyDateTime(event.changedAt)}
             </p>
           </div>
         ))}

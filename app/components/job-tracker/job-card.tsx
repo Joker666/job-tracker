@@ -1,8 +1,13 @@
 "use client";
 
 import { useDraggable } from "@dnd-kit/core";
+import { formatFriendlyDateTime } from "./date-format";
 import { formatInterviewDate } from "./job-detail-modal";
 import type { JobApplicationView } from "./types";
+
+function getAppliedAt(job: JobApplicationView) {
+  return job.statusEvents.find((event) => event.toStatus === "APPLIED")?.changedAt ?? null;
+}
 
 export function JobCard({
   job,
@@ -17,6 +22,7 @@ export function JobCard({
     nowMs === null
       ? undefined
       : job.interviews.find((interview) => new Date(interview.interviewDate).getTime() >= nowMs);
+  const appliedAt = job.status === "APPLIED" ? getAppliedAt(job) : null;
   const featuredInterview =
     nextInterview ??
     (nowMs === null ? job.interviews[0] : job.interviews[job.interviews.length - 1]);
@@ -70,6 +76,14 @@ export function JobCard({
               Sal
             </span>
             <span className="truncate">{job.salaryRange}</span>
+          </div>
+        ) : null}
+        {appliedAt ? (
+          <div className="flex items-center gap-1.5 font-mono text-[11px] font-semibold text-black/75">
+            <span className="w-[30px] inline-flex items-center justify-center uppercase text-[9px] font-bold py-0.5 border border-black bg-[#38BDF8] shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+              App
+            </span>
+            <span className="truncate">{formatFriendlyDateTime(appliedAt)}</span>
           </div>
         ) : null}
       </div>
