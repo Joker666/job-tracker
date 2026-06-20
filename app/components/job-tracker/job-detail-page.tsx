@@ -77,7 +77,7 @@ export function JobDetailPageContent({ job }: { job: JobApplicationView }) {
         </div>
 
         {/* Main Job Detail Container */}
-        <div className="border-4 border-border-custom bg-background p-6 shadow-[8px_8px_0px_0px_var(--shadow-color)] md:p-8 relative">
+        <div className="border-0 sm:border-4 border-border-custom bg-transparent sm:bg-background p-0 sm:p-6 md:p-8 shadow-none sm:shadow-[8px_8px_0px_0px_var(--shadow-color)] relative">
           {/* Header */}
           <div className="mb-8 flex flex-col gap-5 border-b-4 border-border-custom pb-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
