@@ -7,6 +7,7 @@ import { deleteJobApplication } from "@/app/actions";
 import { STATUS_LABELS } from "@/lib/status";
 import { AccessCheckingOverlay, AccessModal } from "./access-modal";
 import { ACCESS_STORAGE_KEY, STATUS_COLORS } from "./constants";
+import { DeleteJobConfirmationDialog } from "./delete-job-confirmation-dialog";
 import { formatInterviewDate, formatResumeUploadedAt } from "./job-detail-modal";
 import { JobModal } from "./job-modal";
 import type { JobApplicationView } from "./types";
@@ -18,6 +19,8 @@ export function JobDetailPageContent({ job }: { job: JobApplicationView }) {
   const [nowMs, setNowMs] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     setNowMs(Date.now());
@@ -36,16 +39,16 @@ export function JobDetailPageContent({ job }: { job: JobApplicationView }) {
   );
 
   async function handleDelete() {
-    if (confirm("Are you sure you want to delete this job application?")) {
-      setIsDeleting(true);
-      try {
-        await deleteJobApplication(job.id);
-        router.push("/");
-      } catch (err) {
-        console.error(err);
-        setIsDeleting(false);
-        alert("Failed to delete the job application.");
-      }
+    setIsDeleting(true);
+    setDeleteError(null);
+
+    try {
+      await deleteJobApplication(job.id);
+      router.push("/");
+    } catch (err) {
+      console.error(err);
+      setDeleteError("Failed to delete job. Try again.");
+      setIsDeleting(false);
     }
   }
 
@@ -100,7 +103,10 @@ export function JobDetailPageContent({ job }: { job: JobApplicationView }) {
                 </button>
                 <button
                   type="button"
-                  onClick={handleDelete}
+                  onClick={() => {
+                    setDeleteError(null);
+                    setIsDeleteConfirmOpen(true);
+                  }}
                   disabled={isDeleting}
                   className="h-10 border-2 border-black bg-[#FB7185] px-4 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer disabled:opacity-50"
                 >
@@ -263,6 +269,22 @@ export function JobDetailPageContent({ job }: { job: JobApplicationView }) {
             setIsEditing(false);
             router.refresh();
           }}
+        />
+      ) : null}
+
+      {isDeleteConfirmOpen ? (
+        <DeleteJobConfirmationDialog
+          isDeleting={isDeleting}
+          error={deleteError}
+          jobTitle={job.title}
+          onCancel={() => {
+            if (isDeleting) {
+              return;
+            }
+            setIsDeleteConfirmOpen(false);
+            setDeleteError(null);
+          }}
+          onConfirm={handleDelete}
         />
       ) : null}
     </main>

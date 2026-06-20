@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { deleteJobApplication } from "@/app/actions";
 import { STATUS_LABELS } from "@/lib/status";
 import { MONTH_LABELS, STATUS_COLORS } from "./constants";
+import { DeleteJobConfirmationDialog } from "./delete-job-confirmation-dialog";
 import type { JobApplicationView } from "./types";
 
 export function formatInterviewDate(value: string) {
@@ -34,6 +35,10 @@ export function JobDetailModal({
   onEdit: () => void;
   nowMs: number | null;
 }) {
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -49,6 +54,20 @@ export function JobDetailModal({
   const sortedInterviews = [...job.interviews].sort(
     (a, b) => new Date(a.interviewDate).getTime() - new Date(b.interviewDate).getTime(),
   );
+
+  async function handleDeleteConfirm() {
+    setIsDeleting(true);
+    setDeleteError(null);
+
+    try {
+      await deleteJobApplication(job.id);
+      onClose();
+    } catch (err) {
+      console.error(err);
+      setDeleteError("Failed to delete job. Try again.");
+      setIsDeleting(false);
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain bg-black/60 sm:px-4 sm:py-8 backdrop-blur-[2px]">
@@ -246,14 +265,16 @@ export function JobDetailModal({
 
         {/* Footer Actions */}
         <div className="mt-8 flex justify-between items-center border-t-2 border-black pt-5">
-          <form action={deleteJobApplication.bind(null, job.id)} onSubmit={() => onClose()}>
-            <button
-              type="submit"
-              className="h-10 border-2 border-black bg-[#FB7185] px-4 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
-            >
-              Delete Job
-            </button>
-          </form>
+          <button
+            type="button"
+            onClick={() => {
+              setDeleteError(null);
+              setIsDeleteConfirmOpen(true);
+            }}
+            className="h-10 border-2 border-black bg-[#FB7185] px-4 font-mono text-xs font-black uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+          >
+            Delete Job
+          </button>
           <div className="flex gap-3">
             <button
               type="button"
@@ -272,6 +293,22 @@ export function JobDetailModal({
           </div>
         </div>
       </div>
+
+      {isDeleteConfirmOpen ? (
+        <DeleteJobConfirmationDialog
+          isDeleting={isDeleting}
+          error={deleteError}
+          jobTitle={job.title}
+          onCancel={() => {
+            if (isDeleting) {
+              return;
+            }
+            setIsDeleteConfirmOpen(false);
+            setDeleteError(null);
+          }}
+          onConfirm={handleDeleteConfirm}
+        />
+      ) : null}
     </div>
   );
 }
