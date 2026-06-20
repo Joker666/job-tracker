@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useId, useState } from "react";
+import { useActionState, useEffect, useId, useRef, useState } from "react";
 import { createJobApplication, updateJobApplication } from "@/app/actions";
 import { APPLICATION_STATUSES, STATUS_LABELS } from "@/lib/status";
 import { INTERVIEW_TYPE_OPTIONS } from "./constants";
@@ -57,11 +57,89 @@ export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }
     }
   }, [onDone, state.ok]);
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const dragCounter = useRef(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [droppedFileName, setDroppedFileName] = useState<string | null>(null);
+  const [clientError, setClientError] = useState<string | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+        setClientError("Only PDF resumes are accepted.");
+        e.target.value = "";
+        setDroppedFileName(null);
+        return;
+      }
+      setClientError(null);
+      setDroppedFileName(file.name);
+    } else {
+      setDroppedFileName(null);
+    }
+  };
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current += 1;
+    if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+      setIsDragging(true);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current -= 1;
+    if (dragCounter.current === 0) {
+      setIsDragging(false);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    dragCounter.current = 0;
+
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const file = e.dataTransfer.files[0];
+      if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+        setClientError("Only PDF resumes are accepted.");
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+        setDroppedFileName(null);
+        return;
+      }
+      setClientError(null);
+      if (fileInputRef.current) {
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInputRef.current.files = dataTransfer.files;
+        setDroppedFileName(file.name);
+      }
+    }
+  };
+
   return (
-    <form action={formAction} className="space-y-6">
-      {state.error ? (
+    <form
+      action={formAction}
+      onDragEnter={handleDragEnter}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      className="relative space-y-6"
+    >
+      {state.error || clientError ? (
         <div className="border-2 border-border-custom bg-[#FB7185] p-3 font-mono text-xs font-bold text-black shadow-[3px_3px_0px_0px_var(--shadow-color)]">
-          <span className="uppercase">[ERROR]</span> {state.error}
+          <span className="uppercase">[ERROR]</span> {state.error || clientError}
         </div>
       ) : null}
 
@@ -149,11 +227,23 @@ export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }
         <label className="flex flex-col gap-2 font-mono text-xs font-black uppercase tracking-wider text-foreground">
           <span>Resume PDF</span>
           <input
+            ref={fileInputRef}
+            onChange={handleFileChange}
             accept="application/pdf,.pdf"
             className="block w-full border-2 border-border-custom bg-card text-xs font-semibold text-foreground/60 outline-none shadow-[2px_2px_0px_0px_var(--shadow-color)] focus:bg-interview/25 focus:shadow-[4px_4px_0px_0px_var(--shadow-color)] transition-all file:mr-4 file:border-0 file:border-r-2 file:border-border-custom file:bg-[#38BDF8] file:px-4 file:py-3 file:font-mono file:text-xs file:font-black file:uppercase file:text-black hover:file:bg-[#7dd3fc] cursor-pointer"
             name="resume"
             type="file"
           />
+          {droppedFileName ? (
+            <span className="mt-1 block font-mono text-[10px] font-bold normal-case text-[#4ADE80]">
+              ✓ Selected: {droppedFileName}
+            </span>
+          ) : null}
+          {clientError ? (
+            <span className="mt-1 block font-mono text-[10px] font-bold normal-case text-[#FB7185]">
+              ✗ Error: {clientError}
+            </span>
+          ) : null}
         </label>
       </div>
 
@@ -289,6 +379,34 @@ export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }
           {pending ? "Saving..." : isEdit ? "Save Changes" : "Create Job"}
         </button>
       </div>
+
+      {isDragging && (
+        <div className="absolute inset-0 z-40 flex flex-col items-center justify-center border-4 border-dashed border-[#FFDE4D] bg-background/95 p-6 backdrop-blur-[2px] transition-all">
+          <div className="flex flex-col items-center justify-center text-center p-8 border-4 border-border-custom bg-card shadow-[6px_6px_0px_0px_var(--shadow-color)] max-w-sm">
+            <svg
+              className="mb-4 h-12 w-12 text-[#38BDF8]"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <title>Upload Resume PDF</title>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+              />
+            </svg>
+            <p className="font-mono text-sm font-black uppercase tracking-wider text-foreground">
+              Drop Resume PDF Here
+            </p>
+            <p className="mt-2 font-mono text-[10px] font-bold uppercase tracking-wider text-foreground/60">
+              Only PDF files are supported
+            </p>
+          </div>
+        </div>
+      )}
     </form>
   );
 }
