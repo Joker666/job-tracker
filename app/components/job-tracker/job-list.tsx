@@ -91,6 +91,20 @@ export function JobListView({
                           </div>
                         ) : null}
 
+                        {/* Applied Date – desktop only */}
+                        <div className="hidden sm:block sm:w-[110px] shrink-0">
+                          <span className="inline-block border border-border-custom bg-label px-1 py-0.5 font-mono text-[8px] font-black uppercase tracking-wider text-foreground mb-1">
+                            Applied
+                          </span>
+                          <p className="font-mono text-[10px] font-bold text-foreground/75">
+                            {new Date(job.createdAt).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            })}
+                          </p>
+                        </div>
+
                         {/* Location & Salary */}
                         {job.location || job.salaryRange ? (
                           <div className="flex flex-col gap-1.5 sm:w-[160px] shrink-0">
