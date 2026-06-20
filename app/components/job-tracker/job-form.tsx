@@ -208,19 +208,19 @@ export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }
               key={row.key}
               className="grid gap-3 border-2 border-border-custom bg-card p-3 shadow-[2px_2px_0px_0px_var(--shadow-color)] sm:grid-cols-[1fr_1fr_auto]"
             >
-              <label className="flex flex-col gap-2 font-mono text-[10px] font-black uppercase tracking-wider text-foreground">
+              <label className="flex flex-col gap-2 min-w-0 font-mono text-[10px] font-black uppercase tracking-wider text-foreground">
                 <span>Interview Date</span>
                 <input
-                  className="h-10 w-full border-2 border-border-custom bg-card px-3 font-sans text-sm font-semibold text-foreground outline-none shadow-[1.5px_1.5px_0px_0px_var(--shadow-color)] focus:bg-interview/25 focus:shadow-[3px_3px_0px_0px_var(--shadow-color)] transition-all"
+                  className="h-10 w-full min-w-0 border-2 border-border-custom bg-card px-3 font-sans text-sm font-semibold text-foreground outline-none shadow-[1.5px_1.5px_0px_0px_var(--shadow-color)] focus:bg-interview/25 focus:shadow-[3px_3px_0px_0px_var(--shadow-color)] transition-all"
                   name="interviewDate"
                   type="date"
                   defaultValue={toDateInputValue(row.interviewDate)}
                 />
               </label>
-              <label className="flex flex-col gap-2 font-mono text-[10px] font-black uppercase tracking-wider text-foreground">
+              <label className="flex flex-col gap-2 min-w-0 font-mono text-[10px] font-black uppercase tracking-wider text-foreground">
                 <span>Interview Type</span>
                 <select
-                  className="h-10 w-full border-2 border-border-custom bg-card px-3 font-mono text-xs font-black uppercase tracking-wider text-foreground outline-none shadow-[1.5px_1.5px_0px_0px_var(--shadow-color)] focus:bg-interview/25 focus:shadow-[3px_3px_0px_0px_var(--shadow-color)] transition-all"
+                  className="h-10 w-full min-w-0 border-2 border-border-custom bg-card px-3 font-mono text-xs font-black uppercase tracking-wider text-foreground outline-none shadow-[1.5px_1.5px_0px_0px_var(--shadow-color)] focus:bg-interview/25 focus:shadow-[3px_3px_0px_0px_var(--shadow-color)] transition-all"
                   name="interviewType"
                   defaultValue={row.interviewType}
                 >
