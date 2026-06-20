@@ -12,6 +12,22 @@ type ActionResult = {
   error?: string;
 };
 
+function getSaveErrorMessage(error: unknown) {
+  if (error instanceof Error && error.message) {
+    if (error.message.includes("statement timeout")) {
+      return "Save timed out. Try again.";
+    }
+
+    if (error.message.includes("connect timeout") || error.message.includes("CONNECTION_TIMEOUT")) {
+      return "Database connection timed out. Try again.";
+    }
+
+    return error.message;
+  }
+
+  return "Save failed.";
+}
+
 export async function verifyAppAccess(
   _previousState: ActionResult,
   formData: FormData,
@@ -170,30 +186,37 @@ export async function createJobApplication(
     };
   }
 
-  await db.transaction(async (tx) => {
-    const [createdJob] = await tx
-      .insert(jobApplications)
-      .values({
-        ...job,
-        ...(resume ?? {}),
-      })
-      .returning({ id: jobApplications.id });
+  try {
+    await db.transaction(async (tx) => {
+      const [createdJob] = await tx
+        .insert(jobApplications)
+        .values({
+          ...job,
+          ...(resume ?? {}),
+        })
+        .returning({ id: jobApplications.id });
 
-    await tx.insert(jobApplicationStatusEvents).values({
-      jobApplicationId: createdJob.id,
-      fromStatus: null,
-      toStatus: job.status,
+      await tx.insert(jobApplicationStatusEvents).values({
+        jobApplicationId: createdJob.id,
+        fromStatus: null,
+        toStatus: job.status,
+      });
+
+      if (interviews.length > 0) {
+        await tx.insert(jobInterviews).values(
+          interviews.map((interview) => ({
+            ...interview,
+            jobApplicationId: createdJob.id,
+          })),
+        );
+      }
     });
-
-    if (interviews.length > 0) {
-      await tx.insert(jobInterviews).values(
-        interviews.map((interview) => ({
-          ...interview,
-          jobApplicationId: createdJob.id,
-        })),
-      );
-    }
-  });
+  } catch (error) {
+    return {
+      ok: false,
+      error: getSaveErrorMessage(error),
+    };
+  }
 
   revalidatePath("/");
 
@@ -225,41 +248,55 @@ export async function updateJobApplication(
     };
   }
 
-  await db.transaction(async (tx) => {
-    const [existingJob] = await tx
-      .select({ status: jobApplications.status })
-      .from(jobApplications)
-      .where(eq(jobApplications.id, id))
-      .limit(1);
+  try {
+    await db.transaction(async (tx) => {
+      const [existingJob] = await tx
+        .select({ status: jobApplications.status })
+        .from(jobApplications)
+        .where(eq(jobApplications.id, id))
+        .limit(1);
 
-    await tx
-      .update(jobApplications)
-      .set({
-        ...job,
-        ...(resume ?? {}),
-        updatedAt: new Date(),
-      })
-      .where(eq(jobApplications.id, id));
+      if (!existingJob) {
+        throw new Error("Job application not found.");
+      }
 
-    if (existingJob && existingJob.status !== job.status) {
-      await tx.insert(jobApplicationStatusEvents).values({
-        jobApplicationId: id,
-        fromStatus: existingJob.status,
-        toStatus: job.status,
-      });
-    }
+      const updatedAt = new Date();
 
-    await tx.delete(jobInterviews).where(eq(jobInterviews.jobApplicationId, id));
+      await tx
+        .update(jobApplications)
+        .set({
+          ...job,
+          ...(resume ?? {}),
+          updatedAt,
+        })
+        .where(eq(jobApplications.id, id));
 
-    if (interviews.length > 0) {
-      await tx.insert(jobInterviews).values(
-        interviews.map((interview) => ({
-          ...interview,
+      if (existingJob.status !== job.status) {
+        await tx.insert(jobApplicationStatusEvents).values({
           jobApplicationId: id,
-        })),
-      );
-    }
-  });
+          fromStatus: existingJob.status,
+          toStatus: job.status,
+          changedAt: updatedAt,
+        });
+      }
+
+      await tx.delete(jobInterviews).where(eq(jobInterviews.jobApplicationId, id));
+
+      if (interviews.length > 0) {
+        await tx.insert(jobInterviews).values(
+          interviews.map((interview) => ({
+            ...interview,
+            jobApplicationId: id,
+          })),
+        );
+      }
+    });
+  } catch (error) {
+    return {
+      ok: false,
+      error: getSaveErrorMessage(error),
+    };
+  }
 
   revalidatePath("/");
 

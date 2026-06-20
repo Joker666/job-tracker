@@ -7,6 +7,9 @@ type UploadedResume = {
   resumeUploadedAt: Date;
 };
 
+const MAX_RESUME_SIZE_BYTES = 10 * 1024 * 1024;
+const R2_UPLOAD_TIMEOUT_MS = 25_000;
+
 function getR2Config() {
   const { R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, R2_PUBLIC_URL } =
     process.env;
@@ -38,9 +41,21 @@ function normalizeFilename(filename: string) {
   return filename.replace(/[^a-zA-Z0-9._-]/g, "-").replace(/-+/g, "-");
 }
 
+function getUploadErrorMessage(error: unknown, signal: AbortSignal) {
+  if (signal.aborted || (error instanceof Error && error.name === "AbortError")) {
+    return "Resume upload timed out. Try again.";
+  }
+
+  return error instanceof Error ? error.message : "Resume upload failed.";
+}
+
 export async function uploadResumePdf(file: File | null): Promise<UploadedResume | null> {
   if (!file || file.size === 0) {
     return null;
+  }
+
+  if (file.size > MAX_RESUME_SIZE_BYTES) {
+    throw new Error("Resume PDF must be 10 MB or smaller.");
   }
 
   if (!isPdf(file)) {
@@ -55,21 +70,31 @@ export async function uploadResumePdf(file: File | null): Promise<UploadedResume
       accessKeyId: config.accessKeyId,
       secretAccessKey: config.secretAccessKey,
     },
+    maxAttempts: 2,
   });
 
   const safeName = normalizeFilename(file.name || "resume.pdf");
   const key = `resumes/${randomUUID()}-${safeName}`;
   const body = Buffer.from(await file.arrayBuffer());
+  const abortController = new AbortController();
+  const timeout = setTimeout(() => abortController.abort(), R2_UPLOAD_TIMEOUT_MS);
 
-  await client.send(
-    new PutObjectCommand({
-      Bucket: config.bucketName,
-      Key: key,
-      Body: body,
-      ContentType: "application/pdf",
-      ContentDisposition: `inline; filename="${safeName}"`,
-    }),
-  );
+  try {
+    await client.send(
+      new PutObjectCommand({
+        Bucket: config.bucketName,
+        Key: key,
+        Body: body,
+        ContentType: "application/pdf",
+        ContentDisposition: `inline; filename="${safeName}"`,
+      }),
+      { abortSignal: abortController.signal },
+    );
+  } catch (error) {
+    throw new Error(getUploadErrorMessage(error, abortController.signal));
+  } finally {
+    clearTimeout(timeout);
+  }
 
   return {
     resumeUrl: `${config.publicUrl}/${key}`,

@@ -194,7 +194,15 @@ export function JobTracker({ jobs }: TrackerProps) {
         </div>
       </div>
 
-      {modal ? <JobModal mode={modal} onClose={() => setModal(null)} /> : null}
+      {modal ? (
+        <JobModal
+          mode={modal}
+          onClose={() => {
+            setModal(null);
+            router.refresh();
+          }}
+        />
+      ) : null}
 
       {detailJob ? (
         <JobDetailModal
