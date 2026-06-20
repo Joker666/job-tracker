@@ -3,7 +3,7 @@
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
-import { jobApplications, jobInterviews } from "@/db/schema";
+import { jobApplicationStatusEvents, jobApplications, jobInterviews } from "@/db/schema";
 import { uploadResumePdf } from "@/lib/r2";
 import { APPLICATION_STATUSES, type ApplicationStatus } from "@/lib/status";
 
@@ -179,6 +179,12 @@ export async function createJobApplication(
       })
       .returning({ id: jobApplications.id });
 
+    await tx.insert(jobApplicationStatusEvents).values({
+      jobApplicationId: createdJob.id,
+      fromStatus: null,
+      toStatus: job.status,
+    });
+
     if (interviews.length > 0) {
       await tx.insert(jobInterviews).values(
         interviews.map((interview) => ({
@@ -220,6 +226,12 @@ export async function updateJobApplication(
   }
 
   await db.transaction(async (tx) => {
+    const [existingJob] = await tx
+      .select({ status: jobApplications.status })
+      .from(jobApplications)
+      .where(eq(jobApplications.id, id))
+      .limit(1);
+
     await tx
       .update(jobApplications)
       .set({
@@ -228,6 +240,14 @@ export async function updateJobApplication(
         updatedAt: new Date(),
       })
       .where(eq(jobApplications.id, id));
+
+    if (existingJob && existingJob.status !== job.status) {
+      await tx.insert(jobApplicationStatusEvents).values({
+        jobApplicationId: id,
+        fromStatus: existingJob.status,
+        toStatus: job.status,
+      });
+    }
 
     await tx.delete(jobInterviews).where(eq(jobInterviews.jobApplicationId, id));
 
@@ -256,13 +276,44 @@ export async function updateJobApplicationStatus(id: string, status: Application
     return { ok: false, error: "Invalid status." };
   }
 
-  await db
-    .update(jobApplications)
-    .set({
-      status,
-      updatedAt: new Date(),
-    })
-    .where(eq(jobApplications.id, id));
+  const result = await db.transaction(async (tx): Promise<ActionResult> => {
+    const [existingJob] = await tx
+      .select({ status: jobApplications.status })
+      .from(jobApplications)
+      .where(eq(jobApplications.id, id))
+      .limit(1);
+
+    if (!existingJob) {
+      return { ok: false, error: "Job application not found." };
+    }
+
+    if (existingJob.status === status) {
+      return { ok: true };
+    }
+
+    const changedAt = new Date();
+
+    await tx
+      .update(jobApplications)
+      .set({
+        status,
+        updatedAt: changedAt,
+      })
+      .where(eq(jobApplications.id, id));
+
+    await tx.insert(jobApplicationStatusEvents).values({
+      jobApplicationId: id,
+      fromStatus: existingJob.status,
+      toStatus: status,
+      changedAt,
+    });
+
+    return { ok: true };
+  });
+
+  if (!result.ok) {
+    return result;
+  }
 
   revalidatePath("/");
 

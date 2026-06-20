@@ -22,6 +22,13 @@
       "when": 1781766280329,
       "tag": "0002_spotty_pride",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1781920820473,
+      "tag": "0003_shiny_preak",
+      "breakpoints": true
     }
   ]
 }

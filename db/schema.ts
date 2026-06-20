@@ -35,8 +35,27 @@ export const jobInterviews = pgTable(
   (table) => [index("job_interviews_job_application_id_idx").on(table.jobApplicationId)],
 );
 
+export const jobApplicationStatusEvents = pgTable(
+  "job_application_status_events",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    jobApplicationId: uuid("job_application_id")
+      .notNull()
+      .references(() => jobApplications.id, { onDelete: "cascade" }),
+    fromStatus: applicationStatusEnum("from_status"),
+    toStatus: applicationStatusEnum("to_status").notNull(),
+    changedAt: timestamp("changed_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("job_application_status_events_job_application_id_idx").on(table.jobApplicationId),
+    index("job_application_status_events_changed_at_idx").on(table.changedAt),
+  ],
+);
+
 export type JobApplication = typeof jobApplications.$inferSelect;
 export type NewJobApplication = typeof jobApplications.$inferInsert;
 export type JobInterview = typeof jobInterviews.$inferSelect;
 export type NewJobInterview = typeof jobInterviews.$inferInsert;
+export type JobApplicationStatusEvent = typeof jobApplicationStatusEvents.$inferSelect;
+export type NewJobApplicationStatusEvent = typeof jobApplicationStatusEvents.$inferInsert;
 export type { ApplicationStatus };

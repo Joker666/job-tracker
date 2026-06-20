@@ -1,6 +1,6 @@
 import { asc, desc, eq, inArray } from "drizzle-orm";
 import { db } from "@/db";
-import { jobApplications, jobInterviews } from "@/db/schema";
+import { jobApplicationStatusEvents, jobApplications, jobInterviews } from "@/db/schema";
 
 export async function getJobApplications() {
   const jobs = await db.select().from(jobApplications).orderBy(desc(jobApplications.createdAt));
@@ -28,9 +28,29 @@ export async function getJobApplications() {
     interviewsByJobId.set(interview.jobApplicationId, existing);
   }
 
+  const statusEvents = await db
+    .select()
+    .from(jobApplicationStatusEvents)
+    .where(
+      inArray(
+        jobApplicationStatusEvents.jobApplicationId,
+        jobs.map((job) => job.id),
+      ),
+    )
+    .orderBy(asc(jobApplicationStatusEvents.changedAt));
+
+  const statusEventsByJobId = new Map<string, typeof statusEvents>();
+
+  for (const statusEvent of statusEvents) {
+    const existing = statusEventsByJobId.get(statusEvent.jobApplicationId) ?? [];
+    existing.push(statusEvent);
+    statusEventsByJobId.set(statusEvent.jobApplicationId, existing);
+  }
+
   return jobs.map((job) => ({
     ...job,
     interviews: interviewsByJobId.get(job.id) ?? [],
+    statusEvents: statusEventsByJobId.get(job.id) ?? [],
   }));
 }
 
@@ -47,8 +67,15 @@ export async function getJobApplicationById(id: string) {
     .where(eq(jobInterviews.jobApplicationId, id))
     .orderBy(asc(jobInterviews.interviewDate));
 
+  const statusEvents = await db
+    .select()
+    .from(jobApplicationStatusEvents)
+    .where(eq(jobApplicationStatusEvents.jobApplicationId, id))
+    .orderBy(asc(jobApplicationStatusEvents.changedAt));
+
   return {
     ...job,
     interviews,
+    statusEvents,
   };
 }

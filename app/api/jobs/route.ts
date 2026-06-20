@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { jobApplications } from "@/db/schema";
+import { jobApplicationStatusEvents, jobApplications } from "@/db/schema";
 import { APPLICATION_STATUSES, type ApplicationStatus } from "@/lib/status";
 
 function corsHeaders() {
@@ -82,19 +82,29 @@ export async function POST(request: NextRequest) {
       ? (status as ApplicationStatus)
       : "SAVED";
 
-    const [newJob] = await db
-      .insert(jobApplications)
-      .values({
-        title: title.trim(),
-        companyName: companyName.trim(),
-        description: typeof description === "string" ? description.trim() : "",
-        location: typeof location === "string" ? location.trim() : "",
-        salaryRange: typeof salaryRange === "string" ? salaryRange.trim() : "",
-        note: typeof note === "string" ? note.trim() : "",
-        status: parsedStatus,
-        jobUrl: typeof jobUrl === "string" ? jobUrl.trim() : null,
-      })
-      .returning();
+    const newJob = await db.transaction(async (tx) => {
+      const [createdJob] = await tx
+        .insert(jobApplications)
+        .values({
+          title: title.trim(),
+          companyName: companyName.trim(),
+          description: typeof description === "string" ? description.trim() : "",
+          location: typeof location === "string" ? location.trim() : "",
+          salaryRange: typeof salaryRange === "string" ? salaryRange.trim() : "",
+          note: typeof note === "string" ? note.trim() : "",
+          status: parsedStatus,
+          jobUrl: typeof jobUrl === "string" ? jobUrl.trim() : null,
+        })
+        .returning();
+
+      await tx.insert(jobApplicationStatusEvents).values({
+        jobApplicationId: createdJob.id,
+        fromStatus: null,
+        toStatus: parsedStatus,
+      });
+
+      return createdJob;
+    });
 
     return NextResponse.json({ ok: true, job: newJob }, { status: 200, headers: corsHeaders() });
   } catch (error) {

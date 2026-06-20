@@ -6,6 +6,7 @@ import { deleteJobApplication } from "@/app/actions";
 import { STATUS_LABELS } from "@/lib/status";
 import { MONTH_LABELS, STATUS_COLORS } from "./constants";
 import { DeleteJobConfirmationDialog } from "./delete-job-confirmation-dialog";
+import { StatusTimeline } from "./status-timeline";
 import type { JobApplicationView } from "./types";
 
 export function formatInterviewDate(value: string) {
@@ -261,6 +262,8 @@ export function JobDetailModal({
               ) : null}
             </div>
           </div>
+
+          <StatusTimeline job={job} />
         </div>
 
         {/* Footer Actions */}

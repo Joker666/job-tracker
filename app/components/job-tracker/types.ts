@@ -11,6 +11,13 @@ export type JobInterviewView = {
   interviewType: string;
 };
 
+export type JobApplicationStatusEventView = {
+  id: string;
+  fromStatus: ApplicationStatus | null;
+  toStatus: ApplicationStatus;
+  changedAt: string;
+};
+
 export type JobApplicationView = {
   id: string;
   title: string;
@@ -27,6 +34,7 @@ export type JobApplicationView = {
   createdAt: string;
   updatedAt: string;
   interviews: JobInterviewView[];
+  statusEvents: JobApplicationStatusEventView[];
 };
 
 export type TrackerProps = {

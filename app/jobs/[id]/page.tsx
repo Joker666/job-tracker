@@ -18,6 +18,12 @@ function serializeJob(
       interviewDate: interview.interviewDate.toISOString(),
       interviewType: interview.interviewType,
     })),
+    statusEvents: job.statusEvents.map((statusEvent) => ({
+      id: statusEvent.id,
+      fromStatus: statusEvent.fromStatus,
+      toStatus: statusEvent.toStatus,
+      changedAt: statusEvent.changedAt.toISOString(),
+    })),
   };
 }
 

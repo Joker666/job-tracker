@@ -10,6 +10,7 @@ import { ACCESS_STORAGE_KEY, STATUS_COLORS } from "./constants";
 import { DeleteJobConfirmationDialog } from "./delete-job-confirmation-dialog";
 import { formatInterviewDate, formatResumeUploadedAt } from "./job-detail-modal";
 import { JobModal } from "./job-modal";
+import { StatusTimeline } from "./status-timeline";
 import type { JobApplicationView } from "./types";
 
 export function JobDetailPageContent({ job }: { job: JobApplicationView }) {
@@ -207,6 +208,8 @@ export function JobDetailPageContent({ job }: { job: JobApplicationView }) {
                   </p>
                 )}
               </div>
+
+              <StatusTimeline job={job} />
 
               {/* Resume Info & PDF Link */}
               <div className="border-2 border-black bg-[#E0F7FA] p-5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] flex flex-col gap-4">
