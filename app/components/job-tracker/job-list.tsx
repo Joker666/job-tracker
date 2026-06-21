@@ -98,14 +98,16 @@ export function JobListView({
                         ) : null}
 
                         {/* Applied Date – desktop only */}
-                        <div className="hidden sm:block sm:w-[150px] shrink-0">
-                          <span className="inline-block border border-border-custom bg-label px-1 py-0.5 font-mono text-[8px] font-black uppercase tracking-wider text-foreground mb-1">
-                            Applied
-                          </span>
-                          <p className="font-mono text-[10px] font-bold text-foreground/75">
-                            {appliedAt ? formatFriendlyDateTime(appliedAt) : "—"}
-                          </p>
-                        </div>
+                        {status !== "SAVED" && appliedAt ? (
+                          <div className="hidden sm:block sm:w-[150px] shrink-0">
+                            <span className="inline-block border border-border-custom bg-label px-1 py-0.5 font-mono text-[8px] font-black uppercase tracking-wider text-foreground mb-1">
+                              Applied
+                            </span>
+                            <p className="font-mono text-[10px] font-bold text-foreground/75">
+                              {formatFriendlyDateTime(appliedAt)}
+                            </p>
+                          </div>
+                        ) : null}
 
                         {/* Location & Salary */}
                         {job.location || job.salaryRange ? (
