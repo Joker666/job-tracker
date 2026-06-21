@@ -2,8 +2,13 @@
 
 import { APPLICATION_STATUSES, STATUS_LABELS } from "@/lib/status";
 import { STATUS_COLORS } from "./constants";
+import { formatFriendlyDateTime } from "./date-format";
 import { formatInterviewDate } from "./job-detail-modal";
 import type { JobApplicationView } from "./types";
+
+function getAppliedAt(job: JobApplicationView) {
+  return job.statusEvents.find((event) => event.toStatus === "APPLIED")?.changedAt ?? null;
+}
 
 export function JobListView({
   jobs,
@@ -58,6 +63,7 @@ export function JobListView({
                     (nowMs === null
                       ? job.interviews[0]
                       : job.interviews[job.interviews.length - 1]);
+                  const appliedAt = getAppliedAt(job);
 
                   return (
                     // biome-ignore lint/a11y/useKeyWithClickEvents: JobCard rows use pointer events and details modals, keyboard actions are handled in individual modal focus loops
@@ -92,16 +98,12 @@ export function JobListView({
                         ) : null}
 
                         {/* Applied Date – desktop only */}
-                        <div className="hidden sm:block sm:w-[110px] shrink-0">
+                        <div className="hidden sm:block sm:w-[150px] shrink-0">
                           <span className="inline-block border border-border-custom bg-label px-1 py-0.5 font-mono text-[8px] font-black uppercase tracking-wider text-foreground mb-1">
                             Applied
                           </span>
                           <p className="font-mono text-[10px] font-bold text-foreground/75">
-                            {new Date(job.createdAt).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            })}
+                            {appliedAt ? formatFriendlyDateTime(appliedAt) : "—"}
                           </p>
                         </div>
 
