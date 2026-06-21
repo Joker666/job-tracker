@@ -1,3 +1,4 @@
+import { verifyAppAccessCookie } from "@/app/actions";
 import { type JobApplicationView, JobTracker } from "@/app/components/job-tracker";
 import { getJobApplications } from "@/app/data";
 
@@ -26,7 +27,8 @@ function serializeJob(
 }
 
 export default async function Home() {
-  const jobs = await getJobApplications();
+  const hasAccess = await verifyAppAccessCookie();
+  const jobs = hasAccess ? await getJobApplications() : [];
 
-  return <JobTracker jobs={jobs.map(serializeJob)} />;
+  return <JobTracker jobs={jobs.map(serializeJob)} initialAccessGranted={hasAccess} />;
 }

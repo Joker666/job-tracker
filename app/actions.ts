@@ -1,7 +1,9 @@
 "use server";
 
+import { createHash } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { db } from "@/db";
 import { jobApplicationStatusEvents, jobApplications, jobInterviews } from "@/db/schema";
 import { uploadResumePdf } from "@/lib/r2";
@@ -28,6 +30,27 @@ function getSaveErrorMessage(error: unknown) {
   return "Save failed.";
 }
 
+export async function verifyAppAccessCookie(): Promise<boolean> {
+  const expectedUsername = process.env.APP_ACCESS_USERNAME;
+  const expectedPassword = process.env.APP_ACCESS_PASSWORD;
+
+  if (!expectedUsername || !expectedPassword) {
+    return false;
+  }
+
+  const cookieStore = await cookies();
+  const cookieValue = cookieStore.get("app_access")?.value;
+  if (!cookieValue) {
+    return false;
+  }
+
+  const expectedSignature = createHash("sha256")
+    .update(`${expectedUsername}:${expectedPassword}`)
+    .digest("hex");
+
+  return cookieValue === expectedSignature;
+}
+
 export async function verifyAppAccess(
   _previousState: ActionResult,
   formData: FormData,
@@ -51,6 +74,19 @@ export async function verifyAppAccess(
       error: "Invalid username or password.",
     };
   }
+
+  const expectedSignature = createHash("sha256")
+    .update(`${expectedUsername}:${expectedPassword}`)
+    .digest("hex");
+
+  const cookieStore = await cookies();
+  cookieStore.set("app_access", expectedSignature, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 60 * 60 * 24 * 30, // 30 days
+    path: "/",
+    sameSite: "lax",
+  });
 
   return { ok: true };
 }
@@ -166,6 +202,9 @@ export async function createJobApplication(
   _previousState: ActionResult,
   formData: FormData,
 ): Promise<ActionResult> {
+  if (!(await verifyAppAccessCookie())) {
+    return { ok: false, error: "Unauthorized." };
+  }
   const job = readJobForm(formData);
   const validationError = validateRequired(job);
 
@@ -228,6 +267,9 @@ export async function updateJobApplication(
   _previousState: ActionResult,
   formData: FormData,
 ): Promise<ActionResult> {
+  if (!(await verifyAppAccessCookie())) {
+    return { ok: false, error: "Unauthorized." };
+  }
   const job = readJobForm(formData);
   const validationError = validateRequired(job);
 
@@ -304,11 +346,17 @@ export async function updateJobApplication(
 }
 
 export async function deleteJobApplication(id: string) {
+  if (!(await verifyAppAccessCookie())) {
+    throw new Error("Unauthorized.");
+  }
   await db.delete(jobApplications).where(eq(jobApplications.id, id));
   revalidatePath("/");
 }
 
 export async function updateJobApplicationStatus(id: string, status: ApplicationStatus) {
+  if (!(await verifyAppAccessCookie())) {
+    return { ok: false, error: "Unauthorized." };
+  }
   if (!APPLICATION_STATUSES.includes(status)) {
     return { ok: false, error: "Invalid status." };
   }

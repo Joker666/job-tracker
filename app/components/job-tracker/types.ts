@@ -39,6 +39,7 @@ export type JobApplicationView = {
 
 export type TrackerProps = {
   jobs: JobApplicationView[];
+  initialAccessGranted: boolean;
 };
 
 export type FormMode = { type: "create"; job?: never } | { type: "edit"; job: JobApplicationView };

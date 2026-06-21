@@ -22,12 +22,12 @@ import type { FormMode, JobApplicationView, TrackerProps } from "./types";
 
 export type { JobApplicationView };
 
-export function JobTracker({ jobs }: TrackerProps) {
+export function JobTracker({ jobs, initialAccessGranted }: TrackerProps) {
   const router = useRouter();
   const [modal, setModal] = useState<FormMode | null>(null);
   const [detailJob, setDetailJob] = useState<JobApplicationView | null>(null);
-  const [accessGranted, setAccessGranted] = useState(false);
-  const [accessChecked, setAccessChecked] = useState(false);
+  const [accessGranted, setAccessGranted] = useState(initialAccessGranted);
+  const [accessChecked, setAccessChecked] = useState(initialAccessGranted);
   const [nowMs, setNowMs] = useState<number | null>(null);
   const [statusError, setStatusError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -62,14 +62,21 @@ export function JobTracker({ jobs }: TrackerProps) {
   }, []);
 
   useEffect(() => {
-    setAccessGranted(localStorage.getItem(ACCESS_STORAGE_KEY) === "true");
-    setAccessChecked(true);
+    const localAccess = localStorage.getItem(ACCESS_STORAGE_KEY) === "true";
+    if (localAccess && !initialAccessGranted) {
+      localStorage.removeItem(ACCESS_STORAGE_KEY);
+      setAccessGranted(false);
+      setAccessChecked(true);
+    } else {
+      setAccessGranted(initialAccessGranted);
+      setAccessChecked(true);
+    }
 
     const savedViewMode = localStorage.getItem(VIEW_MODE_STORAGE_KEY);
     if (savedViewMode === "kanban" || savedViewMode === "list") {
       setViewMode(savedViewMode);
     }
-  }, []);
+  }, [initialAccessGranted]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: run when modal or detail closes to consume toast
   useEffect(() => {
@@ -132,7 +139,12 @@ export function JobTracker({ jobs }: TrackerProps) {
     <main className="min-h-screen bg-background px-4 py-10 text-foreground sm:px-6 lg:px-8 font-sans">
       {!accessChecked ? <AccessCheckingOverlay /> : null}
       {accessChecked && !accessGranted ? (
-        <AccessModal onGranted={() => setAccessGranted(true)} />
+        <AccessModal
+          onGranted={() => {
+            setAccessGranted(true);
+            router.refresh();
+          }}
+        />
       ) : null}
       <div
         className={`mx-auto max-w-7xl ${
