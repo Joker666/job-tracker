@@ -195,21 +195,26 @@ export function TimelineView({
                     onClick={() => onViewDetails(event.job)}
                     className="border-3 border-border-custom bg-card p-4 shadow-[3px_3px_0px_0px_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_var(--shadow-color)] transition-all cursor-pointer"
                   >
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div className="space-y-1">
-                        <span className="inline-block border border-border-custom bg-label font-mono text-[9px] font-black uppercase px-1.5 py-0.5 shadow-[1px_1px_0px_0px_var(--shadow-color)] mr-2">
-                          {formatTime(event.date)}
-                        </span>
-                        <h3 className="inline-flex font-mono text-sm font-black uppercase tracking-tight text-foreground">
-                          {event.title}
-                        </h3>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="inline-block border border-border-custom bg-label font-mono text-[9px] font-black uppercase px-1.5 py-0.5 shadow-[1px_1px_0px_0px_var(--shadow-color)]">
+                            {formatTime(event.date)}
+                          </span>
+                          <h3 className="font-mono text-sm font-black uppercase tracking-tight text-foreground">
+                            {event.title}
+                          </h3>
+                        </div>
                         <p className="font-mono text-xs font-semibold text-foreground/75 mt-1">
-                          {event.details} · <span className="font-bold">{event.companyName}</span>
+                          {event.details}
                         </p>
                       </div>
 
-                      {/* Current Job Status Badge */}
-                      <div className="self-start sm:self-center">
+                      {/* Company Name and Current Job Status Badges */}
+                      <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
+                        <span className="border-2 border-border-custom bg-[#FFDE4D] text-black px-2 py-0.5 font-mono text-[10px] font-black uppercase tracking-wider shadow-[1.5px_1.5px_0px_0px_var(--shadow-color)]">
+                          {event.companyName}
+                        </span>
                         <span className="border-2 border-border-custom bg-[#F3F4F6] dark:bg-[#1F2937] px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wider text-foreground shadow-[1.5px_1.5px_0px_0px_var(--shadow-color)]">
                           Current: {STATUS_LABELS[event.job.status]}
                         </span>
