@@ -11,6 +11,7 @@ import { JobDetailModal } from "./job-detail-modal";
 import { JobListView } from "./job-list";
 import { JobModal } from "./job-modal";
 import { KanbanColumn } from "./kanban-column";
+import { TimelineView } from "./timeline-view";
 import type { FormMode, JobApplicationView, TrackerProps } from "./types";
 
 export type { JobApplicationView };
@@ -24,13 +25,13 @@ export function JobTracker({ jobs, initialAccessGranted }: TrackerProps) {
   const [nowMs, setNowMs] = useState<number | null>(null);
   const [statusError, setStatusError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
+  const [viewMode, setViewMode] = useState<"kanban" | "list" | "timeline">("kanban");
   const [toast, setToast] = useState<{
     message: string;
     type: "success" | "error" | "info";
   } | null>(null);
 
-  const handleViewChange = (mode: "kanban" | "list") => {
+  const handleViewChange = (mode: "kanban" | "list" | "timeline") => {
     setViewMode(mode);
     localStorage.setItem(VIEW_MODE_STORAGE_KEY, mode);
   };
@@ -66,7 +67,7 @@ export function JobTracker({ jobs, initialAccessGranted }: TrackerProps) {
     }
 
     const savedViewMode = localStorage.getItem(VIEW_MODE_STORAGE_KEY);
-    if (savedViewMode === "kanban" || savedViewMode === "list") {
+    if (savedViewMode === "kanban" || savedViewMode === "list" || savedViewMode === "timeline") {
       setViewMode(savedViewMode);
     }
   }, [initialAccessGranted]);
@@ -153,7 +154,7 @@ export function JobTracker({ jobs, initialAccessGranted }: TrackerProps) {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-4">
-            <div className="hidden sm:flex gap-2">
+            <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => handleViewChange("kanban")}
@@ -171,6 +172,15 @@ export function JobTracker({ jobs, initialAccessGranted }: TrackerProps) {
                 }`}
               >
                 List View
+              </button>
+              <button
+                type="button"
+                onClick={() => handleViewChange("timeline")}
+                className={`h-12 border-3 border-border-custom px-4 font-mono text-xs font-black uppercase tracking-wider shadow-[3px_3px_0px_0px_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_var(--shadow-color)] active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0px_0px_var(--shadow-color)] transition-all cursor-pointer ${
+                  viewMode === "timeline" ? "bg-[#FFDE4D] text-black" : "bg-card text-foreground"
+                }`}
+              >
+                Timeline
               </button>
             </div>
             <button
@@ -212,10 +222,17 @@ export function JobTracker({ jobs, initialAccessGranted }: TrackerProps) {
           </div>
         )}
 
-        {/* List View - Mobile default, and desktop when selected */}
-        <div className={viewMode === "list" ? "block" : "block sm:hidden"}>
-          <JobListView jobs={optimisticJobs} onViewDetails={(selectedJob) => setDetailJob(selectedJob)} nowMs={nowMs} />
-        </div>
+        {/* List View - Mobile default when in kanban mode, and desktop/mobile when list is selected */}
+        {(viewMode === "kanban" || viewMode === "list") && (
+          <div className={viewMode === "list" ? "block" : "block sm:hidden"}>
+            <JobListView jobs={optimisticJobs} onViewDetails={(selectedJob) => setDetailJob(selectedJob)} nowMs={nowMs} />
+          </div>
+        )}
+
+        {/* Timeline View - Desktop and Mobile */}
+        {viewMode === "timeline" && (
+          <TimelineView jobs={optimisticJobs} onViewDetails={(selectedJob) => setDetailJob(selectedJob)} nowMs={nowMs} />
+        )}
       </div>
 
       {modal ? (
