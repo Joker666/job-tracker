@@ -189,7 +189,7 @@ export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }
             className="h-11 w-full border-2 border-border-custom bg-card px-3 font-sans text-sm font-semibold text-foreground outline-none shadow-[2px_2px_0px_0px_var(--shadow-color)] focus:bg-interview/25 focus:shadow-[4px_4px_0px_0px_var(--shadow-color)] transition-all"
             name="salaryRange"
             defaultValue={job?.salaryRange ?? ""}
-            placeholder="e.g. $120k - $140k"
+            placeholder="e.g. CA$167K - CA$242K"
           />
         </label>
 

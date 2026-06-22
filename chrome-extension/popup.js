@@ -172,7 +172,7 @@ curl -X POST "${hostUrl}/api/jobs" \\
     "title": "[Extracted Job Title]",
     "companyName": "[Extracted Company Name]",
     "location": "[Extracted Location or empty string]",
-    "salaryRange": "[Extracted Salary Range or empty string]",
+    "salaryRange": "[Extracted Salary Range formatted like CA$167K - CA$242K, or empty string]",
     "status": "SAVED",
     "jobUrl": "${jobUrl}",
     "description": "[Extracted Rich Job Description. You MUST extract and organize the details into the following sections using clear titles and formatting:
