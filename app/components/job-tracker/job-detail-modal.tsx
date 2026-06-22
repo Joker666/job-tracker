@@ -86,9 +86,7 @@ export function JobDetailModal({
               <h2 className="font-mono text-xl font-black uppercase tracking-tight text-foreground md:text-2xl">
                 {job.title}
               </h2>
-              <p className="font-mono text-sm font-bold text-foreground/70 mt-1">
-                {job.companyName}
-              </p>
+              <p className="font-mono text-sm font-bold text-foreground/70 mt-1">{job.companyName}</p>
             </div>
             <div className="flex gap-2 shrink-0">
               <Link
@@ -180,9 +178,7 @@ export function JobDetailModal({
             </h4>
             <div className="text-sm font-medium leading-relaxed max-h-32 overflow-y-auto pr-2 whitespace-pre-wrap text-foreground/90">
               {job.note || (
-                <span className="font-mono text-xs font-bold text-foreground/40 uppercase">
-                  No notes added.
-                </span>
+                <span className="font-mono text-xs font-bold text-foreground/40 uppercase">No notes added.</span>
               )}
             </div>
           </div>
@@ -197,8 +193,7 @@ export function JobDetailModal({
                 {sortedInterviews.length > 0 ? (
                   <div className="space-y-2 max-h-48 overflow-y-auto pr-2">
                     {sortedInterviews.map((interview, index) => {
-                      const isUpcoming =
-                        nowMs !== null && new Date(interview.interviewDate).getTime() >= nowMs;
+                      const isUpcoming = nowMs !== null && new Date(interview.interviewDate).getTime() >= nowMs;
                       return (
                         <div
                           key={interview.id}

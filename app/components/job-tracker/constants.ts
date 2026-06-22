@@ -13,20 +13,7 @@ export const INTERVIEW_TYPE_OPTIONS = [
   "Final",
 ];
 
-export const MONTH_LABELS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
+export const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export const STATUS_COLORS: Record<ApplicationStatus, { bg: string; accentBg: string }> = {
   SAVED: { bg: "bg-[#FFDE4D]", accentBg: "bg-[#FFF9C4]" },

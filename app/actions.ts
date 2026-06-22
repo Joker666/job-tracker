@@ -44,17 +44,12 @@ export async function verifyAppAccessCookie(): Promise<boolean> {
     return false;
   }
 
-  const expectedSignature = createHash("sha256")
-    .update(`${expectedUsername}:${expectedPassword}`)
-    .digest("hex");
+  const expectedSignature = createHash("sha256").update(`${expectedUsername}:${expectedPassword}`).digest("hex");
 
   return cookieValue === expectedSignature;
 }
 
-export async function verifyAppAccess(
-  _previousState: ActionResult,
-  formData: FormData,
-): Promise<ActionResult> {
+export async function verifyAppAccess(_previousState: ActionResult, formData: FormData): Promise<ActionResult> {
   const expectedUsername = process.env.APP_ACCESS_USERNAME;
   const expectedPassword = process.env.APP_ACCESS_PASSWORD;
 
@@ -75,9 +70,7 @@ export async function verifyAppAccess(
     };
   }
 
-  const expectedSignature = createHash("sha256")
-    .update(`${expectedUsername}:${expectedPassword}`)
-    .digest("hex");
+  const expectedSignature = createHash("sha256").update(`${expectedUsername}:${expectedPassword}`).digest("hex");
 
   const cookieStore = await cookies();
   cookieStore.set("app_access", expectedSignature, {
@@ -198,10 +191,7 @@ function readInterviews(formData: FormData) {
   return interviews;
 }
 
-export async function createJobApplication(
-  _previousState: ActionResult,
-  formData: FormData,
-): Promise<ActionResult> {
+export async function createJobApplication(_previousState: ActionResult, formData: FormData): Promise<ActionResult> {
   if (!(await verifyAppAccessCookie())) {
     return { ok: false, error: "Unauthorized." };
   }

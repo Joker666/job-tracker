@@ -28,9 +28,8 @@ export function DeleteJobConfirmationDialog({
           Delete job?
         </h2>
         <p className="mt-3 text-sm font-semibold leading-relaxed text-foreground/75">
-          This will permanently delete{" "}
-          <span className="font-mono font-black text-foreground">{jobTitle}</span>. This action
-          cannot be undone.
+          This will permanently delete <span className="font-mono font-black text-foreground">{jobTitle}</span>. This
+          action cannot be undone.
         </p>
 
         {error ? (

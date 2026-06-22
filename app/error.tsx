@@ -1,12 +1,6 @@
 "use client";
 
-export default function Error({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
+export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
     <main className="flex min-h-screen items-center justify-center bg-background px-4 text-foreground font-sans">
       <div className="max-w-md border-4 border-border-custom bg-card p-6 shadow-[8px_8px_0px_0px_var(--shadow-color)]">

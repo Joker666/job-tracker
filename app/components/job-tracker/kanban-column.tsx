@@ -34,9 +34,7 @@ export function KanbanColumn({
       <div
         className={`mb-6 flex items-center justify-between border-2 border-border-custom p-2.5 ${colorConfig.bg} shadow-[2px_2px_0px_0px_var(--shadow-color)]`}
       >
-        <h2 className="font-mono text-xs font-black uppercase tracking-wider text-black">
-          {STATUS_LABELS[status]}
-        </h2>
+        <h2 className="font-mono text-xs font-black uppercase tracking-wider text-black">{STATUS_LABELS[status]}</h2>
         <span className="border border-border-custom bg-label px-2 py-0.5 font-mono text-xs font-bold text-foreground shadow-[1px_1px_0px_0px_var(--shadow-color)]">
           {jobs.length}
         </span>
@@ -44,9 +42,7 @@ export function KanbanColumn({
 
       <div className="space-y-4">
         {jobs.length > 0 ? (
-          jobs.map((job) => (
-            <JobCard key={job.id} job={job} onViewDetails={onViewDetails} nowMs={nowMs} />
-          ))
+          jobs.map((job) => <JobCard key={job.id} job={job} onViewDetails={onViewDetails} nowMs={nowMs} />)
         ) : (
           <div className="w-full border-2 border-dashed border-border-custom/35 bg-card px-4 py-8 text-center font-mono text-xs font-bold uppercase tracking-wider text-foreground/45">
             Drop jobs here

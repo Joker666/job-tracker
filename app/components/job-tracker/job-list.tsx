@@ -55,14 +55,9 @@ export function JobListView({
                   const nextInterview =
                     nowMs === null
                       ? undefined
-                      : job.interviews.find(
-                          (interview) => new Date(interview.interviewDate).getTime() >= nowMs,
-                        );
+                      : job.interviews.find((interview) => new Date(interview.interviewDate).getTime() >= nowMs);
                   const featuredInterview =
-                    nextInterview ??
-                    (nowMs === null
-                      ? job.interviews[0]
-                      : job.interviews[job.interviews.length - 1]);
+                    nextInterview ?? (nowMs === null ? job.interviews[0] : job.interviews[job.interviews.length - 1]);
                   const appliedAt = getAppliedAt(job);
 
                   return (
@@ -78,9 +73,7 @@ export function JobListView({
                         <h4 className="font-mono text-sm font-black uppercase tracking-tight line-clamp-1">
                           {job.title}
                         </h4>
-                        <p className="font-mono text-xs font-bold text-foreground/60 mt-0.5">
-                          {job.companyName}
-                        </p>
+                        <p className="font-mono text-xs font-bold text-foreground/60 mt-0.5">{job.companyName}</p>
                       </div>
 
                       {/* Right: Location & Salary, Interview Timeline, Links */}

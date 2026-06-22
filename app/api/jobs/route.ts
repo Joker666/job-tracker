@@ -53,10 +53,7 @@ export async function POST(request: NextRequest) {
 
     // Validation
     if (!title || typeof title !== "string" || !title.trim()) {
-      return NextResponse.json(
-        { ok: false, error: "Job title is required." },
-        { status: 400, headers: corsHeaders() },
-      );
+      return NextResponse.json({ ok: false, error: "Job title is required." }, { status: 400, headers: corsHeaders() });
     }
 
     if (!companyName || typeof companyName !== "string" || !companyName.trim()) {
@@ -66,12 +63,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (
-      jobUrl &&
-      typeof jobUrl === "string" &&
-      !jobUrl.startsWith("http://") &&
-      !jobUrl.startsWith("https://")
-    ) {
+    if (jobUrl && typeof jobUrl === "string" && !jobUrl.startsWith("http://") && !jobUrl.startsWith("https://")) {
       return NextResponse.json(
         { ok: false, error: "Job URL must start with http:// or https://." },
         { status: 400, headers: corsHeaders() },

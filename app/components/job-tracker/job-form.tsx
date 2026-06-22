@@ -39,8 +39,7 @@ export function toDateInputValue(value: string) {
 export function JobForm({ mode, onDone }: { mode: FormMode; onDone: () => void }) {
   const isEdit = mode.type === "edit";
   const job = mode.type === "edit" ? mode.job : null;
-  const action =
-    mode.type === "edit" ? updateJobApplication.bind(null, mode.job.id) : createJobApplication;
+  const action = mode.type === "edit" ? updateJobApplication.bind(null, mode.job.id) : createJobApplication;
   const rowIdPrefix = useId();
   const [interviewRows, setInterviewRows] = useState(() =>
     job?.interviews.length

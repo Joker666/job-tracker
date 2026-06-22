@@ -4,9 +4,7 @@ import { getJobApplications } from "@/app/data";
 
 export const dynamic = "force-dynamic";
 
-function serializeJob(
-  job: Awaited<ReturnType<typeof getJobApplications>>[number],
-): JobApplicationView {
+function serializeJob(job: Awaited<ReturnType<typeof getJobApplications>>[number]): JobApplicationView {
   return {
     ...job,
     resumeUploadedAt: job.resumeUploadedAt?.toISOString() ?? null,

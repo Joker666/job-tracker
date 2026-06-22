@@ -11,16 +11,9 @@ const MAX_RESUME_SIZE_BYTES = 10 * 1024 * 1024;
 const R2_UPLOAD_TIMEOUT_MS = 25_000;
 
 function getR2Config() {
-  const { R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, R2_PUBLIC_URL } =
-    process.env;
+  const { R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, R2_PUBLIC_URL } = process.env;
 
-  if (
-    !R2_ACCOUNT_ID ||
-    !R2_ACCESS_KEY_ID ||
-    !R2_SECRET_ACCESS_KEY ||
-    !R2_BUCKET_NAME ||
-    !R2_PUBLIC_URL
-  ) {
+  if (!R2_ACCOUNT_ID || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY || !R2_BUCKET_NAME || !R2_PUBLIC_URL) {
     throw new Error("Cloudflare R2 environment variables are required.");
   }
 

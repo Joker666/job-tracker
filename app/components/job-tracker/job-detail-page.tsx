@@ -57,14 +57,10 @@ export function JobDetailPageContent({ job }: { job: JobApplicationView }) {
   return (
     <main className="min-h-screen bg-background px-4 py-10 text-foreground sm:px-6 lg:px-8 font-sans">
       {!accessChecked ? <AccessCheckingOverlay /> : null}
-      {accessChecked && !accessGranted ? (
-        <AccessModal onGranted={() => setAccessGranted(true)} />
-      ) : null}
+      {accessChecked && !accessGranted ? <AccessModal onGranted={() => setAccessGranted(true)} /> : null}
 
       <div
-        className={`mx-auto max-w-6xl ${
-          accessGranted ? "" : "pointer-events-none select-none blur-sm"
-        }`}
+        className={`mx-auto max-w-6xl ${accessGranted ? "" : "pointer-events-none select-none blur-sm"}`}
         aria-hidden={!accessGranted}
       >
         {/* Navigation / Back Button */}
@@ -91,9 +87,7 @@ export function JobDetailPageContent({ job }: { job: JobApplicationView }) {
                 <h1 className="font-mono text-3xl font-black uppercase tracking-tight text-foreground md:text-4xl">
                   {job.title}
                 </h1>
-                <p className="font-mono text-lg font-bold text-foreground/85 mt-1">
-                  {job.companyName}
-                </p>
+                <p className="font-mono text-lg font-bold text-foreground/85 mt-1">{job.companyName}</p>
               </div>
 
               {/* Top Quick Actions */}
@@ -181,8 +175,7 @@ export function JobDetailPageContent({ job }: { job: JobApplicationView }) {
                 {sortedInterviews.length > 0 ? (
                   <div className="space-y-3">
                     {sortedInterviews.map((interview, index) => {
-                      const isUpcoming =
-                        nowMs !== null && new Date(interview.interviewDate).getTime() >= nowMs;
+                      const isUpcoming = nowMs !== null && new Date(interview.interviewDate).getTime() >= nowMs;
                       return (
                         <div
                           key={interview.id}

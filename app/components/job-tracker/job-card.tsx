@@ -24,15 +24,13 @@ export function JobCard({
       : job.interviews.find((interview) => new Date(interview.interviewDate).getTime() >= nowMs);
   const appliedAt = job.status === "APPLIED" ? getAppliedAt(job) : null;
   const featuredInterview =
-    nextInterview ??
-    (nowMs === null ? job.interviews[0] : job.interviews[job.interviews.length - 1]);
-  const { attributes, listeners, setActivatorNodeRef, setNodeRef, transform, isDragging } =
-    useDraggable({
-      id: job.id,
-      data: {
-        status: job.status,
-      },
-    });
+    nextInterview ?? (nowMs === null ? job.interviews[0] : job.interviews[job.interviews.length - 1]);
+  const { attributes, listeners, setActivatorNodeRef, setNodeRef, transform, isDragging } = useDraggable({
+    id: job.id,
+    data: {
+      status: job.status,
+    },
+  });
   const style = {
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
     opacity: isDragging ? 0.3 : 1,
@@ -91,18 +89,14 @@ export function JobCard({
       {job.interviews.length > 0 ? (
         <div className="mt-3 border border-border-custom bg-interview p-2 shadow-[2px_2px_0px_0px_var(--shadow-color)]">
           <div className="mb-1 flex items-center justify-between gap-2">
-            <span className="font-mono text-[9px] font-black uppercase tracking-wider text-foreground">
-              Interviews
-            </span>
+            <span className="font-mono text-[9px] font-black uppercase tracking-wider text-foreground">Interviews</span>
             <span className="border border-border-custom bg-label px-1.5 py-0.5 font-mono text-[9px] font-black text-foreground shadow-[1px_1px_0px_0px_var(--shadow-color)]">
               {job.interviews.length}
             </span>
           </div>
           <p className="font-mono text-[11px] font-bold leading-normal text-foreground/80">
             {featuredInterview
-              ? `${featuredInterview.interviewType} · ${formatInterviewDate(
-                  featuredInterview.interviewDate,
-                )}`
+              ? `${featuredInterview.interviewType} · ${formatInterviewDate(featuredInterview.interviewDate)}`
               : null}
           </p>
         </div>

@@ -41,14 +41,11 @@ function parsePage() {
     company = inferCompanyFromPageTitle(document.title, title);
     location = findLocationCandidate(title, company);
   } else if (url.includes("bamboohr.com") || url.includes("bamboohr.co")) {
-    title =
-      document.querySelector("h2")?.innerText || document.querySelector("h1")?.innerText || "";
+    title = document.querySelector("h2")?.innerText || document.querySelector("h1")?.innerText || "";
     const logoImg = document.querySelector(".Logo img");
     company = logoImg?.alt || document.title.split("-")[1]?.trim() || "";
     location =
-      document.querySelector(".location")?.innerText ||
-      document.querySelector("[class*='location']")?.innerText ||
-      "";
+      document.querySelector(".location")?.innerText || document.querySelector("[class*='location']")?.innerText || "";
   } else if (url.includes("rippling.com") || url.includes("rippling-ats")) {
     title = document.querySelector("h1")?.innerText || "";
     company = document.title.split("-")[0]?.trim() || "";
@@ -65,8 +62,7 @@ function parsePage() {
       document.querySelector(".top-card-layout__subtitle a")?.innerText ||
       "";
     location =
-      document.querySelector(".job-details-jobs-unified-top-card__primary-description span")
-        ?.innerText ||
+      document.querySelector(".job-details-jobs-unified-top-card__primary-description span")?.innerText ||
       document.querySelector(".topcard__flavor--bullet")?.innerText ||
       "";
   }
@@ -110,8 +106,7 @@ function parsePage() {
   if (!salary) {
     const textToSearch = document.body.innerText;
     // Matches patterns like "$120,000 - $160,000", "$140k to $180k", "$80/hr", "$90,000/yr"
-    const salaryRegex =
-      /\$[0-9]{2,3}(?:,[0-9]{3})*(?:\s*[kK])?\s*(?:-|to)\s*\$[0-9]{2,3}(?:,[0-9]{3})*(?:\s*[kK])?/g;
+    const salaryRegex = /\$[0-9]{2,3}(?:,[0-9]{3})*(?:\s*[kK])?\s*(?:-|to)\s*\$[0-9]{2,3}(?:,[0-9]{3})*(?:\s*[kK])?/g;
     const matches = textToSearch.match(salaryRegex);
     if (matches && matches.length > 0) {
       salary = matches[0].trim();
@@ -180,9 +175,7 @@ function inferCompanyFromPageTitle(pageTitle, jobTitle) {
   if (atWordMatch) return sanitize(atWordMatch[1]);
 
   if (normalizedJobTitle && normalizedTitle.startsWith(normalizedJobTitle)) {
-    return sanitize(
-      normalizedTitle.slice(normalizedJobTitle.length).replace(/^(\s*[-|@]\s*|\s+at\s+)/i, ""),
-    );
+    return sanitize(normalizedTitle.slice(normalizedJobTitle.length).replace(/^(\s*[-|@]\s*|\s+at\s+)/i, ""));
   }
 
   return "";
